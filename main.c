@@ -21,7 +21,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
-    
+#include "display.h"
+
+
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
   */
@@ -34,7 +36,8 @@
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
-void I2C1_init(void);
+void DisplayShowTestPage(void);
+
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -67,7 +70,10 @@ int main(void)
   
   
   GPIO_Setup();
-
+  InitDisplay();
+  
+  DisplayShowTestPage();
+  
   
   /* Infinite loop */
   while (1)
@@ -80,7 +86,15 @@ int main(void)
   }
 }
 
-
+void DisplayShowTestPage(void)
+{
+		PageContainer_t container;
+		container.header = "TestHeader";
+		container.line_one = "Line One";
+		container.line_two = "Line Two";
+		container.line_three = "Line Three";
+		DrawPage(&container);
+}
 
 
 void GPIO_Setup(void)

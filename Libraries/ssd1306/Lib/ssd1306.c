@@ -18,7 +18,10 @@
 
 #include "ssd1306.h"
 
-I2C_TypeDef hi2c1;
+void SSD1306_ON(void);
+void SSD1306_OFF(void);
+
+I2C_TypeDef *hi2c1;
 /* Write command */
 #define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
 /* Write data */
@@ -42,7 +45,7 @@ static SSD1306_t SSD1306;
 
 uint8_t SSD1306_Init(I2C_TypeDef *i2c) {
 
-	hi2c1 = *i2c;
+	hi2c1 = i2c;
 
 	/* Init I2C */
 	ssd1306_I2C_Init();

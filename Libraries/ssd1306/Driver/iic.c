@@ -76,7 +76,7 @@ int8_t i2cm_Start(I2C_TypeDef* I2Cx, uint8_t slave_addr, uint8_t IsRead, uint16_
 
   if (!TOcntr)
 	{
-			LOGE(" I2C Driver " , "i2c Bus is not Connected");
+			//LOGE(" I2C Driver " , "i2c Bus is not Connected");
       return I2C_ERR_NotConnect;
 	}
 

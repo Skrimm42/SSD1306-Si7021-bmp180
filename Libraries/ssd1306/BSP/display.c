@@ -23,7 +23,7 @@ void InitDisplay(void)
 		/* LCD IS CONNECTED TO i2c-2
 			 change this if you are using other ports
 		 */
-		SSD1306_Init(I2C2);
+		SSD1306_Init(I2C1);
 }
 
 void ClearDisplay(void)
@@ -71,7 +71,7 @@ void DisplayThreeLinePage(char *line_one , char *line_two , char *line_three)
 		container.line_two = line_two;
 		container.line_three = line_three;
 		container.pageIndex = 2;
-		updateState = DISPLAY_UPDATE_DENIED;
+		//updateState = DISPLAY_UPDATE_DENIED;
 		DrawPage(&container);
 }
 
@@ -83,6 +83,6 @@ void DisplayFourLinePage(char *line_one , char *line_two , char *line_three , ch
 		container.line_two = line_three;
 		container.line_three = line_four;
 		container.pageIndex = 3;
-		updateState = DISPLAY_UPDATE_DENIED;
+		//updateState = DISPLAY_UPDATE_DENIED;
 		DrawPage(&container);
 }

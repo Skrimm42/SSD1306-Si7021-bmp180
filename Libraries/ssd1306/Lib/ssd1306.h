@@ -43,7 +43,7 @@ SDA        |PB7          |Serial data line
 #include "stm32f10x.h"
 //#include "i2c.h"
 #include "fonts.h"
-#include "../Driver/iic.h"
+#include "iic.h"
 
 #include "stdlib.h"
 #include "string.h"
@@ -254,6 +254,7 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data);
  */
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t *data, uint16_t count);
 
+void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color);
 
 
 /* C++ detection */

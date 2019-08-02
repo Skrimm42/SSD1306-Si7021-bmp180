@@ -19,7 +19,7 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-#include "../lib/ssd1306.h"
+#include "ssd1306.h"
 
 #ifdef __cplusplus
 extern "C" {
