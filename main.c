@@ -50,7 +50,8 @@ GPIO_InitTypeDef GPIO_InitStructure;
 
 int main(void)
 {
-
+  uint16_t cntr = 0;
+  
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32f10x_xx.s) before to branch to application main.
@@ -70,10 +71,12 @@ int main(void)
   
   
   GPIO_Setup();
-  InitDisplay();
+  InitDisplay(); //I2C1 init
   
-  DisplayShowTestPage();
-  
+  //DisplayShowTestPage();
+  SSD1306_GotoXY(5, 3);
+  SSD1306_Puts("Test counter: ", &Font_7x10, SSD1306_COLOR_WHITE);
+  SSD1306_UpdateScreen();
   
   /* Infinite loop */
   while (1)
@@ -83,6 +86,10 @@ int main(void)
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
     
+    cntr++;
+    SSD1306_GotoXY(98, 3);
+    SSD1306_printf(&Font_7x10, "%d", cntr);
+    SSD1306_UpdateScreen();
   }
 }
 

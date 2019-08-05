@@ -17,6 +17,9 @@
 */
 
 #include "display.h"
+#include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 void InitDisplay(void)
 {
@@ -85,4 +88,32 @@ void DisplayFourLinePage(char *line_one , char *line_two , char *line_three , ch
 		container.pageIndex = 3;
 		//updateState = DISPLAY_UPDATE_DENIED;
 		DrawPage(&container);
+}
+
+
+/**
+ * Send a formatted string to the LCD
+ *
+ * @param fmt	String format
+ * @param ...	Variable arguments (see printf())
+ */
+void SSD1306_printf(FontDef_t* Font, const char *fmt, ...) {
+
+	u16 i;
+	u16 size;
+	u8 character;
+	char buffer[32];
+	va_list args;
+
+	va_start(args, fmt);
+	size = vsprintf(buffer, fmt, args);
+
+	for (i = 0; i < size; i++) {
+		character = buffer[i];
+
+		if (character == 10)
+			break;
+		else
+			SSD1306_Putc(character, Font, SSD1306_COLOR_WHITE);
+	}
 }
