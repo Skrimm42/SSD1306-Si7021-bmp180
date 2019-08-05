@@ -18,10 +18,15 @@
 
 #include "ssd1306.h"
 
+
+
+I2C_TypeDef *hi2c1;
+
+
 void SSD1306_ON(void);
 void SSD1306_OFF(void);
 
-I2C_TypeDef *hi2c1;
+
 /* Write command */
 #define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
 /* Write data */
@@ -496,8 +501,9 @@ void SSD1306_OFF(void) {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ssd1306_I2C_Init() {
-	 i2cm_init(hi2c1 , 400000);
+  i2cm_init(hi2c1 , 400000); 
 }
+
 
 void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t* data, uint16_t count) {
 	uint8_t tempBuff = 0x40;
@@ -521,4 +527,69 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
     i2cm_WriteBuff(hi2c1 , &data , 1 , 1000);
   }
   i2cm_Stop(hi2c1 , 1000);
+}
+
+
+
+uint32_t sEE_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite)
+{ 
+  /* Set the pointer to the Number of data to be written. This pointer will be used 
+      by the DMA Transfer Completer interrupt Handler in order to reset the 
+      variable to 0. User should check on this variable in order to know if the 
+      DMA transfer has been complete or not. */
+ // sEEDataWritePointer = NumByteToWrite;  
+  
+  
+uint8_t sEEAddress = SSD1306_I2C_ADDR;
+  
+  /*!< While the bus is busy */
+  sEETimeout = sEE_LONG_TIMEOUT;
+  while(I2C_GetFlagStatus(sEE_I2C, I2C_FLAG_BUSY))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }
+  
+  /*!< Send START condition */
+  I2C_GenerateSTART(sEE_I2C, ENABLE);
+  
+  /*!< Test on EV5 and clear it */
+  sEETimeout = sEE_FLAG_TIMEOUT;
+  while(!I2C_CheckEvent(sEE_I2C, I2C_EVENT_MASTER_MODE_SELECT))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }
+  
+  /*!< Send EEPROM address for write */
+  sEETimeout = sEE_FLAG_TIMEOUT;
+  I2C_Send7bitAddress(sEE_I2C, sEEAddress, I2C_Direction_Transmitter);
+
+  /*!< Test on EV6 and clear it */
+  sEETimeout = sEE_FLAG_TIMEOUT;
+  while(!I2C_CheckEvent(sEE_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }
+
+  
+  /*!< Send the EEPROM's internal address to write to : only one byte Address */
+  I2C_SendData(sEE_I2C, WriteAddr);
+  
+  /*!< Test on EV8 and clear it */
+  sEETimeout = sEE_FLAG_TIMEOUT; 
+  while(!I2C_CheckEvent(sEE_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }  
+  
+  /* Configure the DMA Tx Channel with the buffer address and the buffer size */
+  sEE_LowLevel_DMAConfig((uint32_t)pBuffer, (uint16_t)(NumByteToWrite), sEE_DIRECTION_TX);
+  
+  /* Enable the DMA Tx Stream */
+  DMA_Cmd(sEE_I2C_DMA_STREAM_TX, ENABLE);
+  
+  /* Enable the sEE_I2C peripheral DMA requests */
+  I2C_DMACmd(sEE_I2C, ENABLE);
+  
+  /* If all operations OK, return sEE_OK (0) */
+  return sEE_OK;
 }
