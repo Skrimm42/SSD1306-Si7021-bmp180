@@ -27,6 +27,9 @@
 extern "C" {
 #endif
 
+
+  
+  
 #define I2C_ERR_Ok         0
 #define I2C_ERR_NotConnect -1
 #define I2C_ERR_BadChksum  -2
@@ -37,6 +40,8 @@ int8_t i2cm_Start(I2C_TypeDef* I2Cx, uint8_t slave_addr, uint8_t IsRead, uint16_
 int8_t i2cm_Stop(I2C_TypeDef* I2Cx, uint16_t TimeOut);
 int8_t i2cm_WriteBuff(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint16_t TimeOut);
 int8_t i2cm_ReadBuffAndStop(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint16_t TimeOut);
+
+uint32_t sEE_WritePage(uint8_t DevAddress, uint16_t WriteAddr, uint8_t* pBuffer, uint16_t NumByteToWrite);
 
 //-------DMA Definitions--------------------------------------------------------
 #define sEE_I2C                          I2C1
@@ -71,6 +76,12 @@ int8_t i2cm_ReadBuffAndStop(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint
 #define sEE_DIRECTION_RX                 1   
 
 //---------END DMA Def----------------------------------------------------------
+
+/* I2C address */
+#define SSD1306_I2C_ADDR     0x3C
+#define sEE_I2C_DMA_STREAM_TX     DMA1_Channel6
+#define sEE_OK                    0
+#define sEE_FAIL                  1   
 
 
 #ifdef __cplusplus

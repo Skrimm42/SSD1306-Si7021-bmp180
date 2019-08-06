@@ -20,7 +20,7 @@
 
 DMA_InitTypeDef   sEEDMA_InitStructure; 
 
-/* Maximum Timeout values for flags and events waiting loops. These timeouts are
+  /* Maximum Timeout values for flags and events waiting loops. These timeouts are
    not based on accurate values, they just guarantee that the application will 
    not remain stuck if the I2C communication is corrupted.
    You may modify these timeout values depending on CPU frequency and application
@@ -31,10 +31,10 @@ DMA_InitTypeDef   sEEDMA_InitStructure;
 __IO uint32_t  sEETimeout = sEE_LONG_TIMEOUT; 
 
 //---------------Private Prototypes---------------------------------------------
-void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Direction);
 void sEE_I2C_DMA_TX_IRQHandler(void);
 void sEE_I2C_DMA_RX_IRQHandler(void);
 uint32_t sEE_TIMEOUT_UserCallback(void);
+void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Direction);
 
 
 
@@ -176,6 +176,77 @@ void sEE_I2C_DMA_RX_IRQHandler(void)
 
 
 
+uint32_t sEE_TIMEOUT_UserCallback(void)
+{
+  /* Block communication and all processes */
+  while (1)
+  {   
+  }
+}
+
+
+uint32_t sEE_WritePage(uint8_t DevAddress, uint16_t WriteAddr, uint8_t* pBuffer, uint16_t NumByteToWrite)
+{ 
+  /* Set the pointer to the Number of data to be written. This pointer will be used 
+      by the DMA Transfer Completer interrupt Handler in order to reset the 
+      variable to 0. User should check on this variable in order to know if the 
+      DMA transfer has been complete or not. */
+  
+uint8_t sEEAddress = DevAddress << 1;
+  
+  /*!< While the bus is busy */
+  sEETimeout = sEE_LONG_TIMEOUT;
+  while(I2C_GetFlagStatus(sEE_I2C, I2C_FLAG_BUSY))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }
+  
+  /*!< Send START condition */
+  I2C_GenerateSTART(sEE_I2C, ENABLE);
+  
+  /*!< Test on EV5 and clear it */
+  sEETimeout = sEE_FLAG_TIMEOUT;
+  while(!I2C_CheckEvent(sEE_I2C, I2C_EVENT_MASTER_MODE_SELECT))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }
+  
+  /*!< Send EEPROM address for write */
+  sEETimeout = sEE_FLAG_TIMEOUT;
+  I2C_Send7bitAddress(sEE_I2C, sEEAddress, I2C_Direction_Transmitter);
+
+  /*!< Test on EV6 and clear it */
+  sEETimeout = sEE_FLAG_TIMEOUT;
+  while(!I2C_CheckEvent(sEE_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }
+
+  
+  /*!< Send the EEPROM's internal address to write to : only one byte Address */
+  I2C_SendData(sEE_I2C, WriteAddr);
+  
+  /*!< Test on EV8 and clear it */
+  sEETimeout = sEE_FLAG_TIMEOUT; 
+  while(!I2C_CheckEvent(sEE_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTING))
+  {
+    if((sEETimeout--) == 0) return sEE_TIMEOUT_UserCallback();
+  }  
+  
+  /* Configure the DMA Tx Channel with the buffer address and the buffer size */
+  sEE_LowLevel_DMAConfig((uint32_t)pBuffer, (uint16_t)(NumByteToWrite), sEE_DIRECTION_TX);
+  
+  /* Enable the DMA Tx Stream */
+  DMA_Cmd(sEE_I2C_DMA_STREAM_TX, ENABLE);
+  
+  /* Enable the sEE_I2C peripheral DMA requests */
+  I2C_DMACmd(sEE_I2C, ENABLE);
+  
+  /* If all operations OK, return sEE_OK (0) */
+  return sEE_OK;
+}
+
+
 /**
   * @brief  Initializes DMA channel used by the I2C EEPROM driver.
   * @param  None
@@ -202,16 +273,6 @@ void sEE_LowLevel_DMAConfig(uint32_t pBuffer, uint32_t BufferSize, uint32_t Dire
   }
 }
 
-
-
-
-uint32_t sEE_TIMEOUT_UserCallback(void)
-{
-  /* Block communication and all processes */
-  while (1)
-  {   
-  }
-}
 
 //-----------Enf DMA Functions--------------------------------------------------
 
@@ -303,3 +364,4 @@ int8_t i2cm_ReadBuffAndStop(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint
 
   return I2C_ERR_Ok;
 }
+

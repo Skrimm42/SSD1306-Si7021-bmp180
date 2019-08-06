@@ -49,12 +49,6 @@ SDA        |PB7          |Serial data line
 #include "string.h"
 
 
-/* I2C address */
-#ifndef SSD1306_I2C_ADDR
-#define SSD1306_I2C_ADDR     0x3C //    0x78
-//#define SSD1306_I2C_ADDR       0x7A
-#endif
-
 /* SSD1306 settings */
 /* SSD1306 width in pixels */
 #ifndef SSD1306_WIDTH
@@ -256,13 +250,7 @@ void ssd1306_I2C_WriteMulti(uint8_t address, uint8_t reg, uint8_t *data, uint16_
 
 void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, SSD1306_COLOR_t color);
 
-uint32_t sEE_WritePage(uint8_t* pBuffer, uint16_t WriteAddr, uint16_t NumByteToWrite);
-
-/* I2C address */
-#define SSD1306_I2C_ADDR         0x78
-#define sEE_I2C_DMA_STREAM_TX     DMA1_Channel6
-#define sEE_OK                    0
-#define sEE_FAIL                  1   
+void SSD1306_UpdateScreenDMA(void);
 
 /* C++ detection */
 #ifdef __cplusplus

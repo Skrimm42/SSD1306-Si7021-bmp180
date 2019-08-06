@@ -87,9 +87,10 @@ int main(void)
     delay(500000);
     
     cntr++;
-    SSD1306_GotoXY(98, 3);
-    SSD1306_printf(&Font_7x10, "%d", cntr);
-    SSD1306_UpdateScreen();
+    SSD1306_GotoXY(20, 15);
+    SSD1306_printf(&Font_16x26, "%d", cntr);
+    //SSD1306_UpdateScreen();
+    SSD1306_UpdateScreenDMA();
   }
 }
 
