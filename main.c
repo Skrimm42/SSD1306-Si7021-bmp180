@@ -22,7 +22,14 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "display.h"
+#include "si7021.h"
 
+volatile uint32_t count = 0;
+
+// addresses of registers
+volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
+volatile uint32_t *DWT_CYCCNT = (uint32_t *)0xE0001004; 
+volatile uint32_t *DEMCR = (uint32_t *)0xE000EDFC; 
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -51,6 +58,7 @@ GPIO_InitTypeDef GPIO_InitStructure;
 int main(void)
 {
   uint16_t cntr = 0;
+  Si7021_measurments RelativeHumidityAndTemperature;
   
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
@@ -72,6 +80,8 @@ int main(void)
   
   GPIO_Setup();
   InitDisplay(); //I2C1 init
+  //SI7021 placed on I2C1, no need to setup
+  
   
   //DisplayShowTestPage();
   SSD1306_GotoXY(5, 3);
@@ -86,11 +96,19 @@ int main(void)
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
     
+    Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
+    
     cntr++;
     SSD1306_GotoXY(20, 15);
     SSD1306_printf(&Font_16x26, "%d", cntr);
-    //SSD1306_UpdateScreen();
-    SSD1306_UpdateScreenDMA();
+     
+    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
+    *DWT_CYCCNT = 0; // Reset cycle counter  
+    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
+     count = 0;
+    SSD1306_UpdateScreen();
+    //SSD1306_UpdateScreenDMA();
+    count = *DWT_CYCCNT;
   }
 }
 

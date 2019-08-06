@@ -19,6 +19,8 @@ D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Librari
 -I
 D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\ssd1306\Lib
 -I
+D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\Si7021
+-I
 C:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\CMSIS\Core\Include
 -I
 C:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\CMSIS\DSP\Include
@@ -40,6 +42,8 @@ D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\ssd130
 D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\ssd1306\Driver
 -I
 D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\ssd1306\Lib
+-I
+D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\Si7021
 -I
 C:\Program Files\IAR Systems\Embedded Workbench 8.2\arm\CMSIS\Core\Include
 -I

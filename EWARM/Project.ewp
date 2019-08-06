@@ -353,6 +353,7 @@
                     <state>$PROJ_DIR$\..\Libraries\ssd1306\BSP</state>
                     <state>$PROJ_DIR$\..\Libraries\ssd1306\Driver</state>
                     <state>$PROJ_DIR$\..\Libraries\ssd1306\Lib</state>
+                    <state>$PROJ_DIR$\..\Libraries\Si7021</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -3141,17 +3142,26 @@
     </group>
     <group>
         <name>Libs</name>
-        <file>
-            <name>$PROJ_DIR$\..\Libraries\ssd1306\BSP\display.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Libraries\ssd1306\Lib\fonts.c</name>
-        </file>
+        <group>
+            <name>Si7021</name>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\Si7021\si7021.c</name>
+            </file>
+        </group>
+        <group>
+            <name>ssd1306</name>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\ssd1306\BSP\display.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\ssd1306\Lib\fonts.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\ssd1306\Lib\ssd1306.c</name>
+            </file>
+        </group>
         <file>
             <name>$PROJ_DIR$\..\Libraries\ssd1306\Driver\iic.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Libraries\ssd1306\Lib\ssd1306.c</name>
         </file>
     </group>
     <group>

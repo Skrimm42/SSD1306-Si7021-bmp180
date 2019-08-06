@@ -28,7 +28,13 @@ extern "C" {
 #endif
 
 
-  
+    /* Maximum Timeout values for flags and events waiting loops. These timeouts are
+   not based on accurate values, they just guarantee that the application will 
+   not remain stuck if the I2C communication is corrupted.
+   You may modify these timeout values depending on CPU frequency and application
+   conditions (interrupts routines ...). */   
+#define sEE_FLAG_TIMEOUT         ((uint32_t)0x1000)
+#define sEE_LONG_TIMEOUT         ((uint32_t)(30 * sEE_FLAG_TIMEOUT))
   
 #define I2C_ERR_Ok         0
 #define I2C_ERR_NotConnect -1
