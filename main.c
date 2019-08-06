@@ -82,10 +82,10 @@ int main(void)
   InitDisplay(); //I2C1 init
   //SI7021 placed on I2C1, no need to setup
   
-  
-  //DisplayShowTestPage();
-  SSD1306_GotoXY(5, 3);
-  SSD1306_Puts("Test counter: ", &Font_7x10, SSD1306_COLOR_WHITE);
+  SSD1306_GotoXY(0, 0);
+  SSD1306_Puts("Hum: ", &Font_11x18, SSD1306_COLOR_WHITE);
+  SSD1306_GotoXY(0, 20);
+  SSD1306_Puts("Tem: ", &Font_11x18, SSD1306_COLOR_WHITE);
   SSD1306_UpdateScreen();
   
   /* Infinite loop */
@@ -96,19 +96,21 @@ int main(void)
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
     
-    Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
+   Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
     
-    cntr++;
-    SSD1306_GotoXY(20, 15);
-    SSD1306_printf(&Font_16x26, "%d", cntr);
+    
+    SSD1306_GotoXY(55, 0);
+    SSD1306_printf(&Font_11x18, "%d \%", RelativeHumidityAndTemperature.RH);
+    SSD1306_GotoXY(55, 20);
+    SSD1306_printf(&Font_11x18, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
      
-    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
-    *DWT_CYCCNT = 0; // Reset cycle counter  
-    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
-     count = 0;
-    SSD1306_UpdateScreen();
-    //SSD1306_UpdateScreenDMA();
-    count = *DWT_CYCCNT;
+//    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
+//    *DWT_CYCCNT = 0; // Reset cycle counter  
+//    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
+//     count = 0;
+//    SSD1306_UpdateScreen();
+    SSD1306_UpdateScreenDMA();
+ //   count = *DWT_CYCCNT;
   }
 }
 
