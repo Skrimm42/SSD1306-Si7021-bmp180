@@ -23,8 +23,7 @@
 #include "stm32f10x.h"
 #include "display.h"
 #include "si7021.h"
-
-volatile uint32_t count = 0;
+#include "bmp180.h"
 
 // addresses of registers
 volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
@@ -40,6 +39,10 @@ volatile uint32_t *DEMCR = (uint32_t *)0xE000EDFC;
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+GPIO_InitTypeDef GPIO_InitStructure;
+BMP180_measurements PressAndTemp;
+Si7021_measurments RelativeHumidityAndTemperature;
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
@@ -53,13 +56,9 @@ void DisplayShowTestPage(void);
   * @retval None
   */
 
-GPIO_InitTypeDef GPIO_InitStructure;
-
 int main(void)
 {
-  uint16_t cntr = 0;
-  Si7021_measurments RelativeHumidityAndTemperature;
-  
+
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32f10x_xx.s) before to branch to application main.
@@ -77,15 +76,20 @@ int main(void)
   /* Add your application code here
   */
   
+ for(volatile uint32_t delay=0; delay<1000000; delay++);   
   
   GPIO_Setup();
   InitDisplay(); //I2C1 init
   //SI7021 placed on I2C1, no need to setup
+  BMP180_Setup();
+  
   
   SSD1306_GotoXY(0, 0);
   SSD1306_Puts("Hum: ", &Font_11x18, SSD1306_COLOR_WHITE);
   SSD1306_GotoXY(0, 20);
   SSD1306_Puts("Tem: ", &Font_11x18, SSD1306_COLOR_WHITE);
+  SSD1306_GotoXY(0, 40);
+  SSD1306_Puts("Prs: ", &Font_11x18, SSD1306_COLOR_WHITE);
   SSD1306_UpdateScreen();
   
   /* Infinite loop */
@@ -96,21 +100,24 @@ int main(void)
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
     
-   Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
+    Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
+    BMP180_get_T_P(&PressAndTemp);
+    float mmHG = PressAndTemp.P / 0.1333;
     
     
     SSD1306_GotoXY(55, 0);
     SSD1306_printf(&Font_11x18, "%d \%", RelativeHumidityAndTemperature.RH);
     SSD1306_GotoXY(55, 20);
     SSD1306_printf(&Font_11x18, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
-     
-//    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
-//    *DWT_CYCCNT = 0; // Reset cycle counter  
-//    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
-//     count = 0;
-//    SSD1306_UpdateScreen();
+    SSD1306_GotoXY(55, 40);
+    SSD1306_printf(&Font_11x18, "%.1f",  mmHG);
+    //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
+    //    *DWT_CYCCNT = 0; // Reset cycle counter  
+    //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
+    //     count = 0;
+    //    SSD1306_UpdateScreen();
     SSD1306_UpdateScreenDMA();
- //   count = *DWT_CYCCNT;
+    //   count = *DWT_CYCCNT;
   }
 }
 
@@ -127,14 +134,16 @@ void DisplayShowTestPage(void)
 
 void GPIO_Setup(void)
 {
-    /* GPIOC Periph clock enable */
+  /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
   /* Configure PC13 in output pushpull mode */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
 __IO void delay(__IO uint32_t nCount)

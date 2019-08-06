@@ -354,6 +354,7 @@
                     <state>$PROJ_DIR$\..\Libraries\ssd1306\Driver</state>
                     <state>$PROJ_DIR$\..\Libraries\ssd1306\Lib</state>
                     <state>$PROJ_DIR$\..\Libraries\Si7021</state>
+                    <state>$PROJ_DIR$\..\Libraries\BMP180</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -3142,6 +3143,12 @@
     </group>
     <group>
         <name>Libs</name>
+        <group>
+            <name>BMP180</name>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\BMP180\bmp180.c</name>
+            </file>
+        </group>
         <group>
             <name>Si7021</name>
             <file>
