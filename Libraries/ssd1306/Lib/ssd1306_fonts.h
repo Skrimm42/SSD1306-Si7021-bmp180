@@ -18,6 +18,7 @@ typedef struct {
 
 
 extern FontDef_t Font_6x8;
+extern FontDef_t Font_8x16;
 
 /* C++ detection */
 #ifdef __cplusplus

@@ -106,11 +106,11 @@ int main(void)
     
     
     SSD1306_GotoXY(55, 0);
-    SSD1306_printf(&Font_6x8, "%d \%", RelativeHumidityAndTemperature.RH);
+    SSD1306_printf(&Font_8x16, "%d \%", RelativeHumidityAndTemperature.RH);
     SSD1306_GotoXY(55, 20);
-    SSD1306_printf(&Font_6x8, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
+    SSD1306_printf(&Font_8x16, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
     SSD1306_GotoXY(55, 40);
-    SSD1306_printf(&Font_6x8, "%.1f",  mmHG);
+    SSD1306_printf(&Font_8x16, "%.1f",  mmHG);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter

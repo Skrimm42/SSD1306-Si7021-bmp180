@@ -193,10 +193,10 @@ char SSD1306_Putc(char ch, FontDef_t* Font, SSD1306_COLOR_t color) {
           uint16_t tmp = (ch - 32) * Font->FontHeight + i;
 		b = Font->data[tmp];
 		for (j = 0; j < Font->FontWidth; j++) {
-			if ((b << j) & 0x8000) {
-				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
+			if ((b >> j) & 0x01) {
+				SSD1306_DrawPixel(SSD1306.CurrentX + i, (SSD1306.CurrentY + j), (SSD1306_COLOR_t) color);
 			} else {
-				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
+				SSD1306_DrawPixel(SSD1306.CurrentX + i, (SSD1306.CurrentY + j), (SSD1306_COLOR_t)!color);
 			}
 		}
 	}
