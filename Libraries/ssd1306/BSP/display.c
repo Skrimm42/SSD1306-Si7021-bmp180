@@ -33,21 +33,21 @@ void ClearDisplay(void)
 {
 		SSD1306_Fill(SSD1306_COLOR_BLACK);
 }
-
-void WriteDisplayString(char *data , DisplayPixel_t color , uint8_t x , uint8_t y)
-{
-		SSD1306_Fill(SSD1306_COLOR_BLACK);
-		SSD1306_GotoXY (x , y);
-	  SSD1306_Puts(data , &Font_7x10 , color == DISPLAY_BLUE_COLOR ? SSD1306_COLOR_WHITE : SSD1306_COLOR_BLACK);
-    SSD1306_UpdateScreen();
-}
-
-void WriteDisplayNoClear(char *data , DisplayPixel_t color , uint8_t x , uint8_t y)
-{
-		SSD1306_GotoXY (x , y);
-	  SSD1306_Puts(data , &Font_7x10 , color == DISPLAY_BLUE_COLOR ? SSD1306_COLOR_WHITE : SSD1306_COLOR_BLACK);
-    SSD1306_UpdateScreen();
-}
+//
+//void WriteDisplayString(char *data , DisplayPixel_t color , uint8_t x , uint8_t y)
+//{
+//		SSD1306_Fill(SSD1306_COLOR_BLACK);
+//		SSD1306_GotoXY (x , y);
+//	  SSD1306_Puts(data , &Font_7x10 , color == DISPLAY_BLUE_COLOR ? SSD1306_COLOR_WHITE : SSD1306_COLOR_BLACK);
+//    SSD1306_UpdateScreen();
+//}
+//
+//void WriteDisplayNoClear(char *data , DisplayPixel_t color , uint8_t x , uint8_t y)
+//{
+//		SSD1306_GotoXY (x , y);
+//	  SSD1306_Puts(data , &Font_7x10 , color == DISPLAY_BLUE_COLOR ? SSD1306_COLOR_WHITE : SSD1306_COLOR_BLACK);
+//    SSD1306_UpdateScreen();
+//}
 
 void DrawPage(PageContainer_t *container)
 {

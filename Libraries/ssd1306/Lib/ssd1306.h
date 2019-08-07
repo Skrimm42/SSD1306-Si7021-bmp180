@@ -42,7 +42,7 @@ SDA        |PB7          |Serial data line
 
 #include "stm32f10x.h"
 //#include "i2c.h"
-#include "fonts.h"
+#include "ssd1306_fonts.h"
 #include "iic.h"
 
 #include "stdlib.h"
