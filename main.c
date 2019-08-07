@@ -85,11 +85,10 @@ int main(void)
   
   
   SSD1306_GotoXY(0, 0);
-  SSD1306_Puts("Hum: ", &Font_6x8, SSD1306_COLOR_WHITE);
-  SSD1306_GotoXY(0, 20);
-  SSD1306_Puts("Tem: ", &Font_6x8, SSD1306_COLOR_WHITE);
-  SSD1306_GotoXY(0, 40);
-  SSD1306_Puts("Prs: ", &Font_6x8, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("!A: ", &Font_12x15, SSD1306_COLOR_WHITE);
+  SSD1306_GotoXY(0, 30);
+  SSD1306_Puts("Tem: ", &Font_12x15, SSD1306_COLOR_WHITE);
+
   SSD1306_UpdateScreen();
   
   /* Infinite loop */
@@ -105,12 +104,12 @@ int main(void)
     float mmHG = PressAndTemp.P / 0.1333;
     
     
-    SSD1306_GotoXY(55, 0);
-    SSD1306_printf(&Font_8x16, "%d \%", RelativeHumidityAndTemperature.RH);
-    SSD1306_GotoXY(55, 20);
-    SSD1306_printf(&Font_8x16, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
-    SSD1306_GotoXY(55, 40);
-    SSD1306_printf(&Font_8x16, "%.1f",  mmHG);
+//    SSD1306_GotoXY(55, 0);
+//    SSD1306_printf(&Font_15x24, "%d \%", RelativeHumidityAndTemperature.RH);
+//    SSD1306_GotoXY(55, 20);
+//    SSD1306_printf(&Font_15x24, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
+//    SSD1306_GotoXY(55, 40);
+//    SSD1306_printf(&Font_15x24, "%.1f",  mmHG);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
