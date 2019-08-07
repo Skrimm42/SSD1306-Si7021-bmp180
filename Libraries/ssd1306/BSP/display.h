@@ -56,7 +56,7 @@ void DisplayThreeLinePage(char *line_one , char *line_two , char *line_three);
 /* print a four layer page */
 void DisplayFourLinePage(char *line_one , char *line_two , char *line_three , char *line_four);
 
-void SSD1306_printf(FontDef_t* Font, const char *fmt, ...);
+void SSD1306_printf(FONT_INFO* Font, const char *fmt, ...);
 
 #ifdef __cplusplus
 }

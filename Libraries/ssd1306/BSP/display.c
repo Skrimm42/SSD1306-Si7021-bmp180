@@ -97,7 +97,7 @@ void DisplayFourLinePage(char *line_one , char *line_two , char *line_three , ch
  * @param fmt	String format
  * @param ...	Variable arguments (see printf())
  */
-void SSD1306_printf(FontDef_t* Font, const char *fmt, ...) {
+void SSD1306_printf(FONT_INFO* Font, const char *fmt, ...) {
 
 	u16 i;
 	u16 size;
