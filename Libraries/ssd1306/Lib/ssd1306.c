@@ -181,7 +181,7 @@ char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
 
         uint8_t x, tmp_x;
         uint16_t f_height = Font -> heightPixels;
-        uint8_t f_width = Font -> charInfo[ch-33].widthBits + Font -> spacePixels;
+        uint8_t f_width = Font -> charInfo[ch-33].widthBits;
                 
 	/* Check available space in LCD */
 	if (
@@ -223,10 +223,14 @@ char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
                SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
              }
            }
+           for (j = 0; j < Font -> spacePixels; j++) {
+             
+               SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY), (SSD1306_COLOR_t)!color);
+           }
          }
 
 	/* Increase pointer */
-	SSD1306.CurrentX += f_width;
+	SSD1306.CurrentX += (f_width + Font -> spacePixels);
         
 	/* Check available space in LCD */
 //	if (

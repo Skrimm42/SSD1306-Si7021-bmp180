@@ -38,8 +38,7 @@ typedef struct
 } FONT_INFO;	
   
 
-extern FONT_INFO microsoftSansSerif_14ptFontInfo;
-
+extern FONT_INFO segoePrint_12ptFontInfo;
 /* C++ detection */
 #ifdef __cplusplus
 }
