@@ -83,13 +83,12 @@ int main(void)
   //SI7021 placed on I2C1, no need to setup
   BMP180_Setup();
   
-  
   SSD1306_GotoXY(0, 0);
-  SSD1306_Puts("!AB/: ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
-  SSD1306_GotoXY(0, 30);
-  SSD1306_Puts("Temiiw: ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
-
-  SSD1306_UpdateScreen();
+  SSD1306_Puts("H ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_GotoXY(0, 20);
+  SSD1306_Puts("T ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_GotoXY(0, 39);
+  SSD1306_Puts("P ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
   
   /* Infinite loop */
   while (1)
@@ -103,19 +102,22 @@ int main(void)
     BMP180_get_T_P(&PressAndTemp);
     float mmHG = PressAndTemp.P / 0.1333;
     
+    //ssd1306_clearScreenBuffer();
+  
+    SSD1306_DrawFilledRectangle(15,0,127,63, SSD1306_COLOR_BLACK);
     
-//    SSD1306_GotoXY(55, 0);
-//    SSD1306_printf(&Font_15x24, "%d \%", RelativeHumidityAndTemperature.RH);
-//    SSD1306_GotoXY(55, 20);
-//    SSD1306_printf(&Font_15x24, "%.1f C",  RelativeHumidityAndTemperature.Temperature_f);
-//    SSD1306_GotoXY(55, 40);
-//    SSD1306_printf(&Font_15x24, "%.1f",  mmHG);
+    SSD1306_GotoXY(15, 0);
+    SSD1306_printf(&segoePrint_12ptFontInfo, "%d \%", RelativeHumidityAndTemperature.RH);
+    SSD1306_GotoXY(15, 20);
+    SSD1306_printf(&segoePrint_12ptFontInfo, "%.1f degC",  RelativeHumidityAndTemperature.Temperature_f);
+    SSD1306_GotoXY(15, 39);
+    SSD1306_printf(&segoePrint_12ptFontInfo, "%.1f mmHg",  mmHG);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
     //     count = 0;
-    //    SSD1306_UpdateScreen();
-    SSD1306_UpdateScreenDMA();
+        SSD1306_UpdateScreen();
+    //SSD1306_UpdateScreenDMA();
     //   count = *DWT_CYCCNT;
   }
 }

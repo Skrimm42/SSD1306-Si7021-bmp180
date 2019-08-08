@@ -24,7 +24,7 @@ I2C_TypeDef *hi2c1;
 
 void SSD1306_ON(void);
 void SSD1306_OFF(void);
-
+char SSD1306_Putspace(FONT_INFO* Font, SSD1306_COLOR_t color);
 /* Write command */
 #define SSD1306_WRITECOMMAND(command)      ssd1306_I2C_Write(SSD1306_I2C_ADDR, 0x00, (command))
 /* Write data */
@@ -176,10 +176,35 @@ void SSD1306_GotoXY(uint16_t x, uint16_t y) {
 	SSD1306.CurrentY = y;
 }
 
-char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
-	uint32_t i, b, j;
 
-        uint8_t x, tmp_x;
+char SSD1306_Putspace(FONT_INFO* Font, SSD1306_COLOR_t color) {
+  
+  uint8_t j;
+  uint8_t spacesize = (Font -> spacePixels)*3;
+  
+  for (j = 0; j < spacesize; j++) {
+             // space pixels between chars
+               SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY), (SSD1306_COLOR_t)!color);
+           }
+         
+	/* Increase pointer */
+	SSD1306.CurrentX += spacesize;
+        
+	/* Return character written */
+	return 0x20; //space hex ascii code
+}
+
+char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
+  
+	uint32_t i, b, j;
+        uint8_t x;
+        
+        if(ch == 0x20)
+        {
+          return SSD1306_Putspace(Font, color);
+           
+        }
+        
         uint16_t f_height = Font -> heightPixels;
         uint8_t f_width = Font -> charInfo[ch-33].widthBits;
                 
@@ -193,26 +218,25 @@ char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
 	}
         
         /* Go through font */
-	
+	//How much bytes in character row
          if(f_width <= 8)x = 1;
          else if((f_width > 8) && (f_width <= 16)) x = 2;
          else if((f_width > 16) && (f_width <= 24)) x = 3;
          else if((f_width > 24) && (f_width <= 32)) x = 4;
          else return 0; // Error
          
-         
-         
+         //
          for (i = 0; i < f_height; i++) 
          {
            b = 0;
-           for(j = 0; j < x; j++)
+           for(j = 0; j < x; j++)//get char row
            {
              uint16_t indx = Font -> charInfo[ch-33].offset + i*x + j;
              uint32_t character = (Font -> data[indx]);          
              if(j > 0)b = character | (b << 8);
              else b = character;
            }
-           b = b << (32-8*x);
+           b = b << (32-8*x);//MSB bit first
            
            
            
@@ -224,7 +248,7 @@ char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
              }
            }
            for (j = 0; j < Font -> spacePixels; j++) {
-             
+             // space pixels between chars
                SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY), (SSD1306_COLOR_t)!color);
            }
          }
@@ -232,31 +256,6 @@ char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
 	/* Increase pointer */
 	SSD1306.CurrentX += (f_width + Font -> spacePixels);
         
-	/* Check available space in LCD */
-//	if (
-//		SSD1306_WIDTH <= (SSD1306.CurrentX + Font->FontWidth) ||
-//		SSD1306_HEIGHT <= (SSD1306.CurrentY + Font->FontHeight)
-//	) {
-//		/* Error */
-//		return 0;
-//	}
-//
-//	/* Go through font */
-//	for (i = 0; i < Font->FontHeight; i++) {
-//          uint16_t indx = (ch - 32) * Font->FontHeight + i;
-//		b = Font->data[indx];
-//		for (j = 0; j < Font->FontWidth; j++) {
-//			if ((b << j) & 0x8000) {
-//				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
-//			} else {
-//				SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
-//			}
-//		}
-//	}
-//
-//	/* Increase pointer */
-//	SSD1306.CurrentX += Font->FontWidth;
-
 	/* Return character written */
 	return ch;
 }
@@ -596,5 +595,8 @@ void ssd1306_I2C_Write(uint8_t address, uint8_t reg, uint8_t data) {
 
 
 
-
+void ssd1306_clearScreenBuffer(void)
+{
+  memset(SSD1306_Buffer, 0, (SSD1306_WIDTH * SSD1306_HEIGHT / 8)*sizeof(*SSD1306_Buffer));
+}
 
