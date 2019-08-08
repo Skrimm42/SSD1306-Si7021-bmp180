@@ -179,10 +179,10 @@ void SSD1306_GotoXY(uint16_t x, uint16_t y) {
 char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
 	uint32_t i, b, j;
 
+        uint8_t x, tmp_x;
         uint16_t f_height = Font -> heightPixels;
-        uint8_t f_width = Font -> charInfo[ch-33].widthBits;
-        
-        
+        uint8_t f_width = Font -> charInfo[ch-33].widthBits + Font -> spacePixels;
+                
 	/* Check available space in LCD */
 	if (
 		SSD1306_WIDTH <= (SSD1306.CurrentX + f_width) ||
@@ -192,23 +192,38 @@ char SSD1306_Putc(char ch, FONT_INFO* Font, SSD1306_COLOR_t color) {
 		return 0;
 	}
         
-        
         /* Go through font */
-	for (i = 0; i < f_height; i++) 
-        {
+	
+         if(f_width <= 8)x = 1;
+         else if((f_width > 8) && (f_width <= 16)) x = 2;
+         else if((f_width > 16) && (f_width <= 24)) x = 3;
+         else if((f_width > 24) && (f_width <= 32)) x = 4;
+         else return 0; // Error
          
-          
-          //TODO: index of array 16,24,32 bits
-          uint16_t indx = Font -> charInfo[ch-33].offset + i;
-          b = Font -> data[indx];
-          for (j = 0; j < f_width; j++) {
-            if ((b << j) & 0x80) {
-              SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
-            } else {
-              SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
-            }
-          }
-	}
+         
+         
+         for (i = 0; i < f_height; i++) 
+         {
+           b = 0;
+           for(j = 0; j < x; j++)
+           {
+             uint16_t indx = Font -> charInfo[ch-33].offset + i*x + j;
+             uint32_t character = (Font -> data[indx]);          
+             if(j > 0)b = character | (b << 8);
+             else b = character;
+           }
+           b = b << (32-8*x);
+           
+           
+           
+           for (j = 0; j < f_width; j++) {
+             if ((b << j) & 0x80000000) {
+               SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t) color);
+             } else {
+               SSD1306_DrawPixel(SSD1306.CurrentX + j, (SSD1306.CurrentY + i), (SSD1306_COLOR_t)!color);
+             }
+           }
+         }
 
 	/* Increase pointer */
 	SSD1306.CurrentX += f_width;

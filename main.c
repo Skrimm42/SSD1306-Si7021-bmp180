@@ -87,7 +87,7 @@ int main(void)
   SSD1306_GotoXY(0, 0);
   SSD1306_Puts("!AB: ", &microsoftSansSerif_14ptFontInfo, SSD1306_COLOR_WHITE);
   SSD1306_GotoXY(0, 30);
-  SSD1306_Puts("Tem: ", &microsoftSansSerif_14ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("Temii: ", &microsoftSansSerif_14ptFontInfo, SSD1306_COLOR_WHITE);
 
   SSD1306_UpdateScreen();
   

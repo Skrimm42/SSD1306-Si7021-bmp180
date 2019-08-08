@@ -1,4 +1,4 @@
-"D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\ssd1306\Lib\ssd1306.c"
+"D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\ssd1306\Lib\ssd1306_fonts.c"
 -std=c11
 -ferror-limit=0
 -fbracket-depth=512

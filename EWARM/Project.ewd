@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>31</version>
+                <version>30</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$TOOLKIT_DIR$\CONFIG\debugger\ST\STM32F103CB.ddf</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -76,19 +76,19 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>5.30.0.51236</state>
+                    <state>8.32.2.19370</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>JLINK_ID</state>
+                    <state>ARMSIM_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.32.2.19370</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$TOOLKIT_DIR$\config\flashloader\ST\FlashSTM32F10xxB.board</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -180,7 +180,15 @@
                 </option>
                 <option>
                     <name>OCMulticoreNrOfCores</name>
-                    <state>1</state>
+                    <state></state>
+                </option>
+                <option>
+                    <name>OCMulticoreMaster</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OCMulticorePort</name>
+                    <state>53461</state>
                 </option>
                 <option>
                     <name>OCMulticoreWorkspace</name>
@@ -209,14 +217,6 @@
                 <option>
                     <name>OCMulticoreNrOfCoresSlave</name>
                     <state>1</state>
-                </option>
-                <option>
-                    <name>OCMulticoreAMPConfigType</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>OCMulticoreSessionFile</name>
-                    <state></state>
                 </option>
             </data>
         </settings>
@@ -1433,10 +1433,6 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\RemedyRtosViewer\RemedyRtosViewer.ewplugin</file>
-                <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\SafeRTOS\SafeRTOSPlugin.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -1467,6 +1463,10 @@
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-III\uCOS-III-KA-CSpy.ewplugin</file>
                 <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
+                <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
@@ -1492,7 +1492,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>31</version>
+                <version>30</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -1557,11 +1557,11 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>5.30.0.51236</state>
+                    <state>8.32.2.19370</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -1664,6 +1664,14 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>OCMulticoreMaster</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OCMulticorePort</name>
+                    <state>53461</state>
+                </option>
+                <option>
                     <name>OCMulticoreWorkspace</name>
                     <state></state>
                 </option>
@@ -1690,14 +1698,6 @@
                 <option>
                     <name>OCMulticoreNrOfCoresSlave</name>
                     <state>1</state>
-                </option>
-                <option>
-                    <name>OCMulticoreAMPConfigType</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>OCMulticoreSessionFile</name>
-                    <state></state>
                 </option>
             </data>
         </settings>
@@ -2914,10 +2914,6 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\RemedyRtosViewer\RemedyRtosViewer.ewplugin</file>
-                <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\SafeRTOS\SafeRTOSPlugin.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -2950,6 +2946,10 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
+                <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
+                <loadFlag>1</loadFlag>
+            </plugin>
+            <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -2973,7 +2973,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>31</version>
+                <version>30</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>1</debug>
                 <option>
@@ -3038,11 +3038,11 @@
                 </option>
                 <option>
                     <name>OCDownloadVerifyAll</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>5.30.0.51236</state>
+                    <state>8.32.2.19370</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -3050,7 +3050,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.40.1.21529</state>
+                    <state>8.32.2.19370</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -3145,6 +3145,14 @@
                     <state>1</state>
                 </option>
                 <option>
+                    <name>OCMulticoreMaster</name>
+                    <state>0</state>
+                </option>
+                <option>
+                    <name>OCMulticorePort</name>
+                    <state>53461</state>
+                </option>
+                <option>
                     <name>OCMulticoreWorkspace</name>
                     <state></state>
                 </option>
@@ -3171,14 +3179,6 @@
                 <option>
                     <name>OCMulticoreNrOfCoresSlave</name>
                     <state>1</state>
-                </option>
-                <option>
-                    <name>OCMulticoreAMPConfigType</name>
-                    <state>0</state>
-                </option>
-                <option>
-                    <name>OCMulticoreSessionFile</name>
-                    <state></state>
                 </option>
             </data>
         </settings>
@@ -4395,10 +4395,6 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\RemedyRtosViewer\RemedyRtosViewer.ewplugin</file>
-                <loadFlag>0</loadFlag>
-            </plugin>
-            <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\SafeRTOS\SafeRTOSPlugin.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
@@ -4429,6 +4425,10 @@
             <plugin>
                 <file>$TOOLKIT_DIR$\plugins\rtos\uCOS-III\uCOS-III-KA-CSpy.ewplugin</file>
                 <loadFlag>0</loadFlag>
+            </plugin>
+            <plugin>
+                <file>$EW_DIR$\common\plugins\CodeCoverage\CodeCoverage.ENU.ewplugin</file>
+                <loadFlag>1</loadFlag>
             </plugin>
             <plugin>
                 <file>$EW_DIR$\common\plugins\Orti\Orti.ENU.ewplugin</file>
