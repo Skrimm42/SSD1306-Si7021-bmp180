@@ -46,7 +46,6 @@ Si7021_measurments RelativeHumidityAndTemperature;
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
-void DisplayShowTestPage(void);
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -78,17 +77,17 @@ int main(void)
   
  for(volatile uint32_t delay=0; delay<1000000; delay++);   
   
-  GPIO_Setup();
+  GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
   //SI7021 placed on I2C1, no need to setup
   BMP180_Setup();
   
   SSD1306_GotoXY(0, 0);
-  SSD1306_Puts("H ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("H ", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   SSD1306_GotoXY(0, 20);
-  SSD1306_Puts("T ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("T ", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   SSD1306_GotoXY(0, 39);
-  SSD1306_Puts("P ", &segoePrint_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("P ", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   
   /* Infinite loop */
   while (1)
@@ -102,34 +101,23 @@ int main(void)
     BMP180_get_T_P(&PressAndTemp);
     float mmHG = PressAndTemp.P / 0.1333;
     
-    //ssd1306_clearScreenBuffer();
-  
-    SSD1306_DrawFilledRectangle(15,0,127,63, SSD1306_COLOR_BLACK);
+    //SSD1306_Fill(SSD1306_COLOR_BLACK);  // clear entire screen
+    SSD1306_DrawFilledRectangle(15,0,127,63, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
     
     SSD1306_GotoXY(15, 0);
-    SSD1306_printf(&segoePrint_12ptFontInfo, "%d \%", RelativeHumidityAndTemperature.RH);
+    SSD1306_printf(&palatinoLinotype_12ptFontInfo, "%d \%", RelativeHumidityAndTemperature.RH);
     SSD1306_GotoXY(15, 20);
-    SSD1306_printf(&segoePrint_12ptFontInfo, "%.1f degC",  RelativeHumidityAndTemperature.Temperature_f);
+    SSD1306_printf(&palatinoLinotype_12ptFontInfo, "%.1f degC",  RelativeHumidityAndTemperature.Temperature_f);
     SSD1306_GotoXY(15, 39);
-    SSD1306_printf(&segoePrint_12ptFontInfo, "%.1f mmHg",  mmHG);
+    SSD1306_printf(&palatinoLinotype_12ptFontInfo, "%.1f mmHg",  mmHG);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
     //     count = 0;
-        SSD1306_UpdateScreen();
-    //SSD1306_UpdateScreenDMA();
+    //   SSD1306_UpdateScreen();
+    SSD1306_UpdateScreenDMA();
     //   count = *DWT_CYCCNT;
   }
-}
-
-void DisplayShowTestPage(void)
-{
-		PageContainer_t container;
-		container.header = "TestHeader";
-		container.line_one = "Line One";
-		container.line_two = "Line Two";
-		container.line_three = "Line Three";
-		DrawPage(&container);
 }
 
 
@@ -137,14 +125,11 @@ void GPIO_Setup(void)
 {
   /* GPIOC Periph clock enable */
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
   /* Configure PC13 in output pushpull mode */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-  GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 
 __IO void delay(__IO uint32_t nCount)

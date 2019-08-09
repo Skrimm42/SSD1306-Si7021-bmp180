@@ -38,7 +38,8 @@ typedef struct
 } FONT_INFO;	
   
 
-extern FONT_INFO segoePrint_12ptFontInfo;
+extern FONT_INFO palatinoLinotype_12ptFontInfo;
+
 /* C++ detection */
 #ifdef __cplusplus
 }

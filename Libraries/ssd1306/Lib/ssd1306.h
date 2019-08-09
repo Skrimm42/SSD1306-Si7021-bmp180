@@ -252,7 +252,6 @@ void SSD1306_DrawFilledTriangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t 
 
 void SSD1306_UpdateScreenDMA(void);
 
-void ssd1306_clearScreenBuffer(void);
 
 /* C++ detection */
 #ifdef __cplusplus
