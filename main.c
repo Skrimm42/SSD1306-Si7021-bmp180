@@ -75,19 +75,15 @@ int main(void)
   /* Add your application code here
   */
   
- for(volatile uint32_t delay=0; delay<1000000; delay++);   
+// for(volatile uint32_t delay=0; delay<1000000; delay++);   
   
   GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
   //SI7021 placed on I2C1, no need to setup
   BMP180_Setup();
-  
-  SSD1306_GotoXY(0, 0);
-  SSD1306_Puts("H ", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
-  SSD1306_GotoXY(0, 20);
-  SSD1306_Puts("T ", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
-  SSD1306_GotoXY(0, 39);
-  SSD1306_Puts("P ", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
+    
+  SSD1306_GotoXY(10, 0);
+  SSD1306_Puts("Pressure", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   
   /* Infinite loop */
   while (1)
@@ -102,14 +98,11 @@ int main(void)
     float mmHG = PressAndTemp.P / 0.1333;
     
     //SSD1306_Fill(SSD1306_COLOR_BLACK);  // clear entire screen
-    SSD1306_DrawFilledRectangle(15,0,127,63, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
+    SSD1306_DrawFilledRectangle(10,25,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
     
-    SSD1306_GotoXY(15, 0);
-    SSD1306_printf(&palatinoLinotype_12ptFontInfo, "%d \%", RelativeHumidityAndTemperature.RH);
-    SSD1306_GotoXY(15, 20);
-    SSD1306_printf(&palatinoLinotype_12ptFontInfo, "%.1f degC",  RelativeHumidityAndTemperature.Temperature_f);
-    SSD1306_GotoXY(15, 39);
-    SSD1306_printf(&palatinoLinotype_12ptFontInfo, "%.1f mmHg",  mmHG);
+   
+    SSD1306_GotoXY(10, 25);
+    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  mmHG);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
