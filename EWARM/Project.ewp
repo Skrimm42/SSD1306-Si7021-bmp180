@@ -282,7 +282,7 @@
                 <option>
                     <name>CCAllowList</name>
                     <version>1</version>
-                    <state>10010100</state>
+                    <state>00000000</state>
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
@@ -355,6 +355,7 @@
                     <state>$PROJ_DIR$\..\Libraries\ssd1306\Lib</state>
                     <state>$PROJ_DIR$\..\Libraries\Si7021</state>
                     <state>$PROJ_DIR$\..\Libraries\BMP180</state>
+                    <state>$PROJ_DIR$\..\Libraries\BMP280</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -370,7 +371,7 @@
                 </option>
                 <option>
                     <name>CCOptLevel</name>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CCOptStrategy</name>
@@ -379,7 +380,7 @@
                 </option>
                 <option>
                     <name>CCOptLevelSlave</name>
-                    <state>2</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>CompilerMisraRules98</name>
@@ -2107,6 +2108,15 @@
             <name>BMP180</name>
             <file>
                 <name>$PROJ_DIR$\..\Libraries\BMP180\bmp180.c</name>
+            </file>
+        </group>
+        <group>
+            <name>BMP280</name>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\BMP280\bmp280.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\BMP280\bmp280_user.c</name>
             </file>
         </group>
         <group>

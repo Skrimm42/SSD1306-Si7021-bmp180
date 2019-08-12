@@ -339,7 +339,7 @@ int8_t i2cm_ReadBuffAndStop(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint
   uint16_t TOcntr;
 
   I2C_AcknowledgeConfig(I2Cx, ENABLE);
-
+    
   while (len-- != 1)
   {
     TOcntr = TimeOut;
@@ -353,8 +353,6 @@ int8_t i2cm_ReadBuffAndStop(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint
   TOcntr = TimeOut;
   while ((!I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_BYTE_RECEIVED) ) && TOcntr) {TOcntr--;}
   *pbuf++ = I2C_ReceiveData(I2Cx);
-
-  i2cm_Stop(I2Cx, TimeOut);
 
   return I2C_ERR_Ok;
 }

@@ -1,9 +1,9 @@
-"D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c"
+"D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\BMP280\bmp280.c"
 -std=c11
 -ferror-limit=0
 -fbracket-depth=512
 -I
-D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\STM32F10x_StdPeriph_Driver\src
+D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\Libraries\BMP280
 -I
 D:\ARM_PROJECTS\STM32F103_Projects\SSD1306\projects\SSD1306_i2c\EWARM\..
 -I

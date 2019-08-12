@@ -24,6 +24,7 @@
 #include "display.h"
 #include "si7021.h"
 #include "bmp180.h"
+#include "bmp280_user.h"
 
 // addresses of registers
 volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
@@ -43,6 +44,14 @@ volatile uint32_t *DEMCR = (uint32_t *)0xE000EDFC;
 GPIO_InitTypeDef GPIO_InitStructure;
 BMP180_measurements PressAndTemp;
 Si7021_measurments RelativeHumidityAndTemperature;
+
+struct bmp280_dev bmp;
+struct bmp280_uncomp_data ucomp_data;
+uint32_t pres32, pres64;
+double pres;
+int32_t temp32;
+double temp;
+    
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
@@ -57,7 +66,7 @@ void GPIO_Setup(void);
 
 int main(void)
 {
-
+uint8_t rslt;
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32f10x_xx.s) before to branch to application main.
@@ -81,28 +90,47 @@ int main(void)
   InitDisplay(); //I2C1 init
   //SI7021 placed on I2C1, no need to setup
   BMP180_Setup();
+  BMP280_I2C_Setup(&bmp);
     
   SSD1306_GotoXY(10, 0);
-  SSD1306_Puts("Pressure", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("Raw data", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   
   /* Infinite loop */
   while (1)
   {
     GPIO_SetBits(GPIOC, GPIO_Pin_13);
-    delay(700000);
+    delay(500000);
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
     
-    Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
+/* Reading the raw data from sensor */
+        rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp);
+
+        /* Getting the compensated pressure using 32 bit precision */
+        rslt = bmp280_get_comp_pres_32bit(&pres32, ucomp_data.uncomp_press, &bmp);
+
+        /* Getting the compensated pressure using 64 bit precision */
+        rslt = bmp280_get_comp_pres_64bit(&pres64, ucomp_data.uncomp_press, &bmp);
+
+        /* Getting the compensated pressure as floating point value */
+        rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp);
+        
+        /* Getting the 32 bit compensated temperature */
+        rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp);
+
+        /* Getting the compensated temperature as floating point value */
+        rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp);
+        
+    //Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
     BMP180_get_T_P(&PressAndTemp);
-    float mmHG = PressAndTemp.P / 0.1333;
+    //float mmHG = PressAndTemp.P / 0.1333;
     
     //SSD1306_Fill(SSD1306_COLOR_BLACK);  // clear entire screen
-    SSD1306_DrawFilledRectangle(10,25,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
+    //SSD1306_DrawFilledRectangle(10,25,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
     
    
-    SSD1306_GotoXY(10, 25);
-    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  mmHG);
+    //SSD1306_GotoXY(10, 25);
+    //SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  mmHG);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter

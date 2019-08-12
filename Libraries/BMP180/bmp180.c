@@ -82,9 +82,9 @@ void BMP180_get_T_P(BMP180_measurements* BMP180_res)
   //Start temperature measurement
   I2C_write(0x2E, 0xF4);
   //Wait to measurement
-  GPIO_SetBits(GPIOB, GPIO_Pin_12);
+  //GPIO_SetBits(GPIOB, GPIO_Pin_12);
   for(volatile uint32_t del = 0; del<18500; del++);
-  GPIO_ResetBits(GPIOB, GPIO_Pin_12);
+  //GPIO_ResetBits(GPIOB, GPIO_Pin_12);
   //Read uncompensated temperature value
   UT = I2C_read(0xF6) * 256 + I2C_read(0xF7);
   
