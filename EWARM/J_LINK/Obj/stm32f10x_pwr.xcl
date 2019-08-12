@@ -28,6 +28,8 @@ E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\.
 -I
 E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\BMP180
 -I
+E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\BMP280
+-I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\arm\CMSIS\Core\Include
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\arm\CMSIS\DSP\Include
@@ -53,6 +55,8 @@ E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\Librari
 E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\Libraries\Si7021
 -I
 E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\Libraries\BMP180
+-I
+E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\Libraries\BMP280
 -I
 C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\arm\CMSIS\Core\Include
 -I

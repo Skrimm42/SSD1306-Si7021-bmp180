@@ -9,61 +9,61 @@ void ErrorUserCallback(uint8_t ErrCode);
 int8_t user_i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t len)
 {
   //dev_id don't check (assume there is single device present)
-    uint8_t status;
-    status = i2cm_Start(BMP280_I2C, BMP280_I2C_ADDR_PRIM, 0, 1000);
-    status = i2cm_WriteBuff(BMP280_I2C, &reg_addr , 1, 1000);
-    status = i2cm_Start(BMP280_I2C, BMP280_I2C_ADDR_PRIM, 1, 1000);
-    status = i2cm_ReadBuffAndStop(BMP280_I2C, data, len, 1000);
-    return status;
-//  I2C_AcknowledgeConfig(BMP280_I2C, ENABLE); // Enable I2C acknowledgment
-//  I2C_GenerateSTART(BMP280_I2C, ENABLE);
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_MODE_SELECT)); // Wait for EV5
-//  I2C_Send7bitAddress(BMP280_I2C, (BMP280_I2C_ADDR_PRIM<<1), I2C_Direction_Transmitter); // Send slave address
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)); // Wait for EV6
-//  I2C_SendData(BMP280_I2C, reg_addr); // Send register address
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED)); // Wait for EV8
-//  I2C_GenerateSTART(BMP280_I2C, ENABLE); // Send repeated START condition (aka Re-START)
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_MODE_SELECT)); // Wait for EV5
-//  I2C_Send7bitAddress(BMP280_I2C, (BMP280_I2C_ADDR_PRIM << 1), I2C_Direction_Receiver); // Send slave address for READ
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)); // Wait for EV6
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)); // Wait for EV7 (Byte received from slave)
-//  while (len-- != 1)
-//  {
-//    while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED));
-//    *data++ = I2C_ReceiveData(BMP280_I2C);
-//  }
-//  I2C_AcknowledgeConfig(BMP280_I2C, DISABLE); // Disable I2C acknowledgment
-//  I2C_GenerateSTOP(BMP280_I2C, ENABLE); // Send STOP condition
-//  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)); // Wait for EV7 (Byte received from slave)
-//   *data++ = I2C_ReceiveData(BMP280_I2C);
-//   return 0;
+//    uint8_t status;
+//    status = i2cm_Start(BMP280_I2C, BMP280_I2C_ADDR_PRIM, 0, 1000);
+//    status = i2cm_WriteBuff(BMP280_I2C, &reg_addr , 1, 1000);
+//    status = i2cm_Start(BMP280_I2C, BMP280_I2C_ADDR_PRIM, 1, 1000);
+//    status = i2cm_ReadBuffAndStop(BMP280_I2C, data, len, 1000);
+//    return status;
+  I2C_AcknowledgeConfig(BMP280_I2C, ENABLE); // Enable I2C acknowledgment
+  I2C_GenerateSTART(BMP280_I2C, ENABLE);
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_MODE_SELECT)); // Wait for EV5
+  I2C_Send7bitAddress(BMP280_I2C, (BMP280_I2C_ADDR_PRIM<<1), I2C_Direction_Transmitter); // Send slave address
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED)); // Wait for EV6
+  I2C_SendData(BMP280_I2C, reg_addr); // Send register address
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED)); // Wait for EV8
+  I2C_GenerateSTART(BMP280_I2C, ENABLE); // Send repeated START condition (aka Re-START)
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_MODE_SELECT)); // Wait for EV5
+  I2C_Send7bitAddress(BMP280_I2C, (BMP280_I2C_ADDR_PRIM << 1), I2C_Direction_Receiver); // Send slave address for READ
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED)); // Wait for EV6
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)); // Wait for EV7 (Byte received from slave)
+  while (len-- != 1)
+  {
+    while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED));
+    *data++ = I2C_ReceiveData(BMP280_I2C);
+  }
+  I2C_AcknowledgeConfig(BMP280_I2C, DISABLE); // Disable I2C acknowledgment
+  I2C_GenerateSTOP(BMP280_I2C, ENABLE); // Send STOP condition
+  while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)); // Wait for EV7 (Byte received from slave)
+   *data++ = I2C_ReceiveData(BMP280_I2C);
+   return 0;
 }
 
 
 int8_t user_i2c_write(uint8_t dev_id, uint8_t reg_addr,	uint8_t *data, uint16_t len)
 {
   //dev_id don't check (assume there is single device present)
-    uint8_t status;
-    status = i2cm_Start(BMP280_I2C, BMP280_I2C_ADDR_PRIM, 1, 1000);
-    status = i2cm_WriteBuff(BMP280_I2C, data, len, 1000);
-    status = i2cm_Stop(BMP280_I2C, 1000);
-    return status;
-  
-//  I2C_GenerateSTART(BMP280_I2C, ENABLE);
-//  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_MODE_SELECT));
-//  I2C_Send7bitAddress(BMP280_I2C, (BMP280_I2C_ADDR_PRIM << 1), I2C_Direction_Transmitter);
-//  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
-//  I2C_SendData(BMP280_I2C, reg_addr);
-//  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-//  while(len--)
-//  {
-//    I2C_SendData(BMP280_I2C, *(data++));
-//    while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-//  }
+//    uint8_t status;
+//    status = i2cm_Start(BMP280_I2C, BMP280_I2C_ADDR_PRIM, 1, 1000);
+//    status = i2cm_WriteBuff(BMP280_I2C, data, len, 1000);
+//    status = i2cm_Stop(BMP280_I2C, 1000);
+//    return status;
 //  
-//  I2C_GenerateSTOP(BMP280_I2C, ENABLE);
-//  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
-//  return 0;
+  I2C_GenerateSTART(BMP280_I2C, ENABLE);
+  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_MODE_SELECT));
+  I2C_Send7bitAddress(BMP280_I2C, (BMP280_I2C_ADDR_PRIM << 1), I2C_Direction_Transmitter);
+  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+  I2C_SendData(BMP280_I2C, reg_addr);
+  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  while(len--)
+  {
+    I2C_SendData(BMP280_I2C, *(data++));
+    while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  }
+  
+  I2C_GenerateSTOP(BMP280_I2C, ENABLE);
+  while(!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+  return 0;
 }
 
 
