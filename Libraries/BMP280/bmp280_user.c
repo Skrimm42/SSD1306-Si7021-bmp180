@@ -103,16 +103,16 @@ void BMP280_I2C_Setup(struct bmp280_dev *bmp)
   
   /* configuring the temperature oversampling, filter coefficient and output data rate */
   /* Overwrite the desired settings */
-  conf.filter = BMP280_FILTER_COEFF_2;
+  conf.filter = BMP280_FILTER_COEFF_16;
   
   /* Temperature oversampling set at 4x */
-  conf.os_temp = BMP280_OS_4X;
+  conf.os_temp = BMP280_OS_2X;
   
   /* Pressure oversampling set at 4x */
-  conf.os_pres = BMP280_OS_4X;
+  conf.os_pres = BMP280_OS_16X;
   
   /* Setting the output data rate as 1HZ(1000ms) */
-  conf.odr = BMP280_ODR_1000_MS;
+  conf.odr = BMP280_ODR_0_5_MS;
   rslt = bmp280_set_config(&conf, bmp);
   if(rslt) ErrorUserCallback(rslt);
   

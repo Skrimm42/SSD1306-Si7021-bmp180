@@ -25,6 +25,7 @@
 #include "si7021.h"
 #include "bmp180.h"
 #include "bmp280_user.h"
+#include <math.h>
 
 // addresses of registers
 volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
@@ -51,6 +52,8 @@ uint32_t pres32, pres64;
 double pres;
 int32_t temp32;
 double temp;
+uint32_t pres64_ = 25503577;
+double height;
     
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
@@ -63,7 +66,6 @@ void GPIO_Setup(void);
   * @param  None
   * @retval None
   */
-uint8_t dd[10];
 int main(void)
 {
 uint8_t rslt;
@@ -93,7 +95,7 @@ uint8_t rslt;
   BMP280_I2C_Setup(&bmp);
     
   SSD1306_GotoXY(10, 0);
-  SSD1306_Puts("Raw data", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
+  SSD1306_Puts("Height", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   
   /* Infinite loop */
   while (1)
@@ -102,35 +104,32 @@ uint8_t rslt;
     delay(500000);
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
-    user_i2c_read(0, 0xFA, dd, 3);
-/* Reading the raw data from sensor */
-        rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp);
-
-        /* Getting the compensated pressure using 32 bit precision */
-        rslt = bmp280_get_comp_pres_32bit(&pres32, ucomp_data.uncomp_press, &bmp);
-
-        /* Getting the compensated pressure using 64 bit precision */
-        rslt = bmp280_get_comp_pres_64bit(&pres64, ucomp_data.uncomp_press, &bmp);
-
-        /* Getting the compensated pressure as floating point value */
-        rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp);
-        
-        /* Getting the 32 bit compensated temperature */
-        rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp);
-
-        /* Getting the compensated temperature as floating point value */
-        rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp);
-        
-    //Si7021_Read_RH_Temp(&RelativeHumidityAndTemperature);
-    BMP180_get_T_P(&PressAndTemp);
-    //float mmHG = PressAndTemp.P / 0.1333;
     
-    //SSD1306_Fill(SSD1306_COLOR_BLACK);  // clear entire screen
-    SSD1306_DrawFilledRectangle(10,25,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
+    /* Reading the raw data from sensor */
+    rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp);
     
-   
-    SSD1306_GotoXY(10, 25);
-    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%d",  pres32);
+    /* Getting the compensated pressure using 32 bit precision */
+    //rslt = bmp280_get_comp_pres_32bit(&pres32, ucomp_data.uncomp_press, &bmp);
+    
+    /* Getting the compensated pressure using 64 bit precision */
+    rslt = bmp280_get_comp_pres_64bit(&pres64, ucomp_data.uncomp_press, &bmp);
+    
+    /* Getting the compensated pressure as floating point value */
+    //rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp);
+    
+    /* Getting the 32 bit compensated temperature */
+    rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp);
+    
+    /* Getting the compensated temperature as floating point value */
+    //rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp);
+    
+    height = 0.292256318324018 * (double)(temp32 + 27315) * log((double)pres64 / (double)pres64_);
+    SSD1306_DrawFilledRectangle(0,20,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
+    
+    
+    SSD1306_GotoXY(0, 20);
+    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.2f",  height);
+    
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter

@@ -1,8 +1,14 @@
 main.pbi: \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\DLib_float_setup.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\ycheck.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\math.h \
+  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\stddef.h \
+  E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\BMP280\bmp280_defs.h \
+  E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\BMP280\bmp280.h \
+  E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\BMP280\bmp280_user.h \
   E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\BMP180\bmp180.h \
   E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\Si7021\si7021.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\DLib_Product_stdlib.h \
-  C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\ycheck.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\stdlib.h \
   E:\WORK\ST\STM32F013C8T6B_BluePill\Projects\SSD1306\projects\SSD1306_i2c\EWARM\..\Libraries\ssd1306\Driver\iic.h \
   C:\Program\ Files\ (x86)\IAR\ Systems\Embedded\ Workbench\ 8.3\arm\inc\c\DLib_Product_string.h \
