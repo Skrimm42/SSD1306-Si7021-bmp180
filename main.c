@@ -124,6 +124,9 @@ uint8_t rslt;
     //rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp);
     
     height = 0.292256318324018 * (double)(temp32 + 27315) * log((double)pres64 / (double)pres64_);
+    
+    if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))pres64_=pres64;
+    
     SSD1306_DrawFilledRectangle(0,20,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
     
     
@@ -149,6 +152,11 @@ void GPIO_Setup(void)
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+  // Button
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 }
 
