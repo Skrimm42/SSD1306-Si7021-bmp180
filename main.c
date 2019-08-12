@@ -63,7 +63,7 @@ void GPIO_Setup(void);
   * @param  None
   * @retval None
   */
-
+uint8_t dd[10];
 int main(void)
 {
 uint8_t rslt;
@@ -102,7 +102,7 @@ uint8_t rslt;
     delay(500000);
     GPIO_ResetBits(GPIOC, GPIO_Pin_13);
     delay(500000);
-    
+    user_i2c_read(0, 0xFA, dd, 3);
 /* Reading the raw data from sensor */
         rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp);
 
@@ -126,11 +126,11 @@ uint8_t rslt;
     //float mmHG = PressAndTemp.P / 0.1333;
     
     //SSD1306_Fill(SSD1306_COLOR_BLACK);  // clear entire screen
-    //SSD1306_DrawFilledRectangle(10,25,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
+    SSD1306_DrawFilledRectangle(10,25,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
     
    
-    //SSD1306_GotoXY(10, 25);
-    //SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  mmHG);
+    SSD1306_GotoXY(10, 25);
+    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%d",  pres32);
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
