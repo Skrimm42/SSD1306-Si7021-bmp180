@@ -26,6 +26,7 @@
 #include "bmp180.h"
 #include "bmp280_user.h"
 #include <math.h>
+#include <stdbool.h>
 
 // addresses of registers
 volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
@@ -48,12 +49,12 @@ Si7021_measurments RelativeHumidityAndTemperature;
 
 struct bmp280_dev bmp;
 struct bmp280_uncomp_data ucomp_data;
-uint32_t pres32, pres64;
+uint32_t pres32, pres64 = 25503577;
 double pres;
 int32_t temp32;
 double temp;
 uint32_t pres64_ = 25503577;
-double height;
+float height;
     
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
@@ -66,6 +67,8 @@ void GPIO_Setup(void);
   * @param  None
   * @retval None
   */
+uint32_t count;
+bool tgl;
 int main(void)
 {
 uint8_t rslt;
@@ -91,7 +94,7 @@ uint8_t rslt;
   GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
   //SI7021 placed on I2C1, no need to setup
-  BMP180_Setup();
+  //BMP180_Setup();
   BMP280_I2C_Setup(&bmp);
     
   SSD1306_GotoXY(10, 0);
@@ -100,10 +103,15 @@ uint8_t rslt;
   /* Infinite loop */
   while (1)
   {
-    GPIO_SetBits(GPIOC, GPIO_Pin_13);
-    delay(500000);
-    GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-    delay(500000);
+        if(tgl)GPIO_SetBits(GPIOC, GPIO_Pin_13);
+        else GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+        tgl = !tgl;
+        
+     while(I2C_GetFlagStatus(sEE_I2C, I2C_FLAG_BUSY));
+    //GPIO_SetBits(GPIOC, GPIO_Pin_13);
+    //delay(500000);
+    //GPIO_ResetBits(GPIOC, GPIO_Pin_13);
+    //delay(500000);
     
     /* Reading the raw data from sensor */
     rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp);
@@ -117,29 +125,30 @@ uint8_t rslt;
     /* Getting the compensated pressure as floating point value */
     //rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp);
     
+    
     /* Getting the 32 bit compensated temperature */
     rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp);
     
     /* Getting the compensated temperature as floating point value */
     //rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp);
     
-    height = 0.292256318324018 * (double)(temp32 + 27315) * log((double)pres64 / (double)pres64_);
-    
-    if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))pres64_=pres64;
-    
-    SSD1306_DrawFilledRectangle(0,20,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
-    
-    
-    SSD1306_GotoXY(0, 20);
-    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.2f",  height);
-    
     //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
     //    *DWT_CYCCNT = 0; // Reset cycle counter  
     //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
-    //     count = 0;
-    //   SSD1306_UpdateScreen();
+    //    count = 0;
+    if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))pres64_=pres64;
+    height = -0.292256318324018 * (double)(temp32 + 27315) * log((double)pres64 / (double)pres64_);
+    //    count = *DWT_CYCCNT;
+   
+    
+    SSD1306_DrawFilledRectangle(0,20,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
+    
+    SSD1306_GotoXY(0, 20);
+    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.2f",  height);
+
+    //SSD1306_UpdateScreen();
     SSD1306_UpdateScreenDMA();
-    //   count = *DWT_CYCCNT;
+    
   }
 }
 
