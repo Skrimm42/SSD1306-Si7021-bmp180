@@ -23,7 +23,8 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-
+#include "const_var.h"
+    
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
   */
@@ -156,5 +157,27 @@ void SysTick_Handler(void)
   * @}
   */ 
 
+void TIM3_IRQHandler(void)
+{ 
+  if(TIM_GetITStatus(TIM3, TIM_IT_CC3) == SET) 
+  {
+    /* Clear TIM3 Capture compare interrupt pending bit */
+    TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
+    
+    IC3ReadValue1 = TIM_GetCapture3(TIM3);
+    if(IC3ReadValue1_>IC3ReadValue1)Capture1 = 65535 - IC3ReadValue1_ + IC3ReadValue1;
+    else Capture1 = IC3ReadValue1 - IC3ReadValue1_;
+    IC3ReadValue1_ = IC3ReadValue1;   
+  }
+  if(TIM_GetITStatus(TIM3, TIM_IT_CC4) == SET) 
+  {
+    /* Clear TIM3 Capture compare interrupt pending bit */
+    TIM_ClearITPendingBit(TIM3, TIM_IT_CC4);
+    IC3ReadValue2 = TIM_GetCapture4(TIM3);
+    if(IC3ReadValue2_>IC3ReadValue2)Capture1 = 65535 - IC3ReadValue2_ + IC3ReadValue2;
+    else Capture2 = IC3ReadValue2 - IC3ReadValue2_;
+    IC3ReadValue2_ = IC3ReadValue2;
+  }
+}
 
 /******************* (C) COPYRIGHT 2011 STMicroelectronics *****END OF FILE****/

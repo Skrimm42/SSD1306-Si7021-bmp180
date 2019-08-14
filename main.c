@@ -59,7 +59,7 @@ float height;
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
-
+void Tim3_Setup(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -93,10 +93,11 @@ uint8_t rslt;
   
   GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
-  //SI7021 placed on I2C1, no need to setup
-  //BMP180_Setup();
   BMP280_I2C_Setup(&bmp);
-    
+  
+  Tim3_Setup();//Input Capture  
+  
+  
   SSD1306_GotoXY(10, 0);
   SSD1306_Puts("Height", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
   
@@ -175,6 +176,50 @@ __IO void delay(__IO uint32_t nCount)
   {
   }
    
+}
+
+
+void Tim3_Setup(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+  NVIC_InitTypeDef NVIC_InitStructure;  
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+  TIM_ICInitTypeDef  TIM_ICInitStructure;
+  
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+  GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;//Tim3_Ch1, Tim2_Ch4
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
+  
+  NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+  NVIC_SetPriority(TIM3_IRQn, 0x0F);
+  
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+  TIM_TimeBaseStructure.TIM_Period = 65535;
+  TIM_TimeBaseStructure.TIM_Prescaler = 53;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  
+  TIM_TimeBaseInit(TIM3, &TIM_TimeBaseStructure);
+  
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_3;
+  TIM_ICInitStructure.TIM_ICPolarity = TIM_ICPolarity_Rising;
+  TIM_ICInitStructure.TIM_ICSelection = TIM_ICSelection_DirectTI;
+  TIM_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;
+  TIM_ICInitStructure.TIM_ICFilter = 0x0;
+  TIM_ICInit(TIM3, &TIM_ICInitStructure);
+  TIM_ICInitStructure.TIM_Channel = TIM_Channel_4;
+  TIM_ICInit(TIM3, &TIM_ICInitStructure);
+  /* TIM enable counter */
+  TIM_Cmd(TIM3, ENABLE);
+  
+  /* Enable the CC2 Interrupt Request */
+  TIM_ITConfig(TIM3, TIM_IT_CC3 | TIM_IT_CC4, ENABLE);
 }
 
 #ifdef  USE_FULL_ASSERT

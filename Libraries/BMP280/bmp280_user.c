@@ -32,10 +32,14 @@ int8_t user_i2c_read(uint8_t dev_id, uint8_t reg_addr, uint8_t *data, uint16_t l
     while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED));
     *data++ = I2C_ReceiveData(BMP280_I2C);
   }
+  TIM_ITConfig(TIM3, TIM_IT_CC3 | TIM_IT_CC4, DISABLE); //костыль, зависает 
   I2C_AcknowledgeConfig(BMP280_I2C, DISABLE); // Disable I2C acknowledgment
   I2C_GenerateSTOP(BMP280_I2C, ENABLE); // Send STOP condition
+  TIM_ITConfig(TIM3, TIM_IT_CC3 | TIM_IT_CC4, ENABLE);
+  
   while (!I2C_CheckEvent(BMP280_I2C, I2C_EVENT_MASTER_BYTE_RECEIVED)); // Wait for EV7 (Byte received from slave)
    *data++ = I2C_ReceiveData(BMP280_I2C);
+   
    return 0;
 }
 
