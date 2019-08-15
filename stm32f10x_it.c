@@ -24,6 +24,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 #include "const_var.h"
+#include "user.h"
     
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -168,6 +169,9 @@ void TIM3_IRQHandler(void)
     if(IC3ReadValue1_>IC3ReadValue1)Capture1 = 65535 - IC3ReadValue1_ + IC3ReadValue1;
     else Capture1 = IC3ReadValue1 - IC3ReadValue1_;
     IC3ReadValue1_ = IC3ReadValue1;   
+    Impulse_wheel++;//Overall impulse amount during session
+    Count_stop_vel = 0;
+    Capture_total+=Capture1;
   }
   if(TIM_GetITStatus(TIM3, TIM_IT_CC4) == SET) 
   {
@@ -177,6 +181,18 @@ void TIM3_IRQHandler(void)
     if(IC3ReadValue2_>IC3ReadValue2)Capture1 = 65535 - IC3ReadValue2_ + IC3ReadValue2;
     else Capture2 = IC3ReadValue2 - IC3ReadValue2_;
     IC3ReadValue2_ = IC3ReadValue2;
+    Count_stop_cad = 0;
+  }
+}
+
+
+void TIM4_IRQHandler(void)
+{ 
+  if(TIM_GetITStatus(TIM4, TIM_IT_Update) == SET) 
+  {
+    /* Clear TIM3 Capture compare interrupt pending bit */
+    TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+    user_program();
   }
 }
 

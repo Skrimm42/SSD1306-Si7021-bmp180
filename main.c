@@ -22,16 +22,12 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x.h"
 #include "display.h"
-#include "si7021.h"
-#include "bmp180.h"
 #include "bmp280_user.h"
 #include <math.h>
 #include <stdbool.h>
+#include "const_var.h"
 
-// addresses of registers
-volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
-volatile uint32_t *DWT_CYCCNT = (uint32_t *)0xE0001004; 
-volatile uint32_t *DEMCR = (uint32_t *)0xE000EDFC; 
+
 
 /** @addtogroup STM32F10x_StdPeriph_Template
   * @{
@@ -44,22 +40,15 @@ volatile uint32_t *DEMCR = (uint32_t *)0xE000EDFC;
 /* Private variables ---------------------------------------------------------*/
 
 GPIO_InitTypeDef GPIO_InitStructure;
-BMP180_measurements PressAndTemp;
-Si7021_measurments RelativeHumidityAndTemperature;
 
-struct bmp280_dev bmp;
-struct bmp280_uncomp_data ucomp_data;
-uint32_t pres32, pres64 = 25503577;
-double pres;
-int32_t temp32;
-double temp;
-uint32_t pres64_ = 25503577;
-float height;
+
+
     
 /* Private function prototypes -----------------------------------------------*/
 __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
 void Tim3_Setup(void);
+void Tim4_setup(void);
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -67,11 +56,9 @@ void Tim3_Setup(void);
   * @param  None
   * @retval None
   */
-uint32_t count;
-bool tgl;
+
 int main(void)
 {
-uint8_t rslt;
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32f10x_xx.s) before to branch to application main.
@@ -89,66 +76,17 @@ uint8_t rslt;
   /* Add your application code here
   */
   
-// for(volatile uint32_t delay=0; delay<1000000; delay++);   
   
   GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
   BMP280_I2C_Setup(&bmp);
   
   Tim3_Setup();//Input Capture  
-  
-  
-  SSD1306_GotoXY(10, 0);
-  SSD1306_Puts("Height", &palatinoLinotype_12ptFontInfo, SSD1306_COLOR_WHITE);
+  Tim4_setup();//1sec user program
   
   /* Infinite loop */
   while (1)
   {
-        if(tgl)GPIO_SetBits(GPIOC, GPIO_Pin_13);
-        else GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-        tgl = !tgl;
-        
-     while(I2C_GetFlagStatus(sEE_I2C, I2C_FLAG_BUSY));
-    //GPIO_SetBits(GPIOC, GPIO_Pin_13);
-    //delay(500000);
-    //GPIO_ResetBits(GPIOC, GPIO_Pin_13);
-    //delay(500000);
-    
-    /* Reading the raw data from sensor */
-    rslt = bmp280_get_uncomp_data(&ucomp_data, &bmp);
-    
-    /* Getting the compensated pressure using 32 bit precision */
-    //rslt = bmp280_get_comp_pres_32bit(&pres32, ucomp_data.uncomp_press, &bmp);
-    
-    /* Getting the compensated pressure using 64 bit precision */
-    rslt = bmp280_get_comp_pres_64bit(&pres64, ucomp_data.uncomp_press, &bmp);
-    
-    /* Getting the compensated pressure as floating point value */
-    //rslt = bmp280_get_comp_pres_double(&pres, ucomp_data.uncomp_press, &bmp);
-    
-    
-    /* Getting the 32 bit compensated temperature */
-    rslt = bmp280_get_comp_temp_32bit(&temp32, ucomp_data.uncomp_temp, &bmp);
-    
-    /* Getting the compensated temperature as floating point value */
-    //rslt = bmp280_get_comp_temp_double(&temp, ucomp_data.uncomp_temp, &bmp);
-    
-    //    *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
-    //    *DWT_CYCCNT = 0; // Reset cycle counter  
-    //    *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
-    //    count = 0;
-    if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))pres64_=pres64;
-    height = -0.292256318324018 * (double)(temp32 + 27315) * log((double)pres64 / (double)pres64_);
-    //    count = *DWT_CYCCNT;
-   
-    
-    SSD1306_DrawFilledRectangle(0,20,127,52, SSD1306_COLOR_BLACK);// clean area to prevent screen artifacts due variable character width
-    
-    SSD1306_GotoXY(0, 20);
-    SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.2f",  height);
-
-    //SSD1306_UpdateScreen();
-    SSD1306_UpdateScreenDMA();
     
   }
 }
@@ -164,7 +102,7 @@ void GPIO_Setup(void)
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
   // Button
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15 | GPIO_Pin_14;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
@@ -197,11 +135,11 @@ void Tim3_Setup(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
-  NVIC_SetPriority(TIM3_IRQn, 0x0F);
+  NVIC_SetPriority(TIM3_IRQn, 0x0E);
   
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
   TIM_TimeBaseStructure.TIM_Period = 65535;
-  TIM_TimeBaseStructure.TIM_Prescaler = 53;
+  TIM_TimeBaseStructure.TIM_Prescaler = 444;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   
@@ -220,6 +158,33 @@ void Tim3_Setup(void)
   
   /* Enable the CC2 Interrupt Request */
   TIM_ITConfig(TIM3, TIM_IT_CC3 | TIM_IT_CC4, ENABLE);
+}
+
+
+void Tim4_setup(void)
+{
+  NVIC_InitTypeDef NVIC_InitStructure;  
+  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
+  
+  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  NVIC_Init(&NVIC_InitStructure);
+  NVIC_SetPriority(TIM4_IRQn, 0x0F);
+  
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+  TIM_TimeBaseStructure.TIM_Period = 9999;
+  TIM_TimeBaseStructure.TIM_Prescaler = 3599;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+  
+  TIM_TimeBaseInit(TIM4, &TIM_TimeBaseStructure);
+  
+  TIM_Cmd(TIM4, ENABLE);
+  
+  /* Enable the CC2 Interrupt Request */
+  TIM_ITConfig(TIM4, TIM_IT_Update, ENABLE);
 }
 
 #ifdef  USE_FULL_ASSERT

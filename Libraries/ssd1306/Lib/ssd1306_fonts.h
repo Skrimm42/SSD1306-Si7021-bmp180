@@ -40,6 +40,7 @@ typedef struct
 
 extern FONT_INFO palatinoLinotype_12ptFontInfo;
 extern FONT_INFO dSEG7Classic_20ptFontInfo;
+extern FONT_INFO lessPerfectDOSVGA_13ptFontInfo;
 /* C++ detection */
 #ifdef __cplusplus
 }

@@ -2106,24 +2106,12 @@
     <group>
         <name>Libs</name>
         <group>
-            <name>BMP180</name>
-            <file>
-                <name>$PROJ_DIR$\..\Libraries\BMP180\bmp180.c</name>
-            </file>
-        </group>
-        <group>
             <name>BMP280</name>
             <file>
                 <name>$PROJ_DIR$\..\Libraries\BMP280\bmp280.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Libraries\BMP280\bmp280_user.c</name>
-            </file>
-        </group>
-        <group>
-            <name>Si7021</name>
-            <file>
-                <name>$PROJ_DIR$\..\Libraries\Si7021\si7021.c</name>
             </file>
         </group>
         <group>
@@ -2224,6 +2212,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\stm32f10x_it.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\user.c</name>
         </file>
     </group>
 </project>
