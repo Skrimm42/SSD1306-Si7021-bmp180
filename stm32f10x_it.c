@@ -165,23 +165,47 @@ void TIM3_IRQHandler(void)
     /* Clear TIM3 Capture compare interrupt pending bit */
     TIM_ClearITPendingBit(TIM3, TIM_IT_CC3);
     
-    IC3ReadValue1 = TIM_GetCapture3(TIM3);
-    if(IC3ReadValue1_>IC3ReadValue1)Capture1 = 65535 - IC3ReadValue1_ + IC3ReadValue1;
-    else Capture1 = IC3ReadValue1 - IC3ReadValue1_;
-    IC3ReadValue1_ = IC3ReadValue1;   
-    Impulse_wheel++;//Overall impulse amount during session
-    Count_stop_vel = 0;
-    Capture_total+=Capture1;
+    if((prog_state | ~STATE_VEL) == ~STATE_VEL)//idle vel
+    {
+      prog_state = prog_state | STATE_VEL;
+      Capture1 = 1;
+      Count_stop_vel = 0;
+      Fvel = 0;
+      return;
+    }
+    else if((prog_state & STATE_VEL) == STATE_VEL)//work vel
+    {
+      IC3ReadValue1 = TIM_GetCapture3(TIM3);
+      if(IC3ReadValue1_>IC3ReadValue1)Capture1 = 65535 - IC3ReadValue1_ + IC3ReadValue1;
+      else Capture1 = IC3ReadValue1 - IC3ReadValue1_;
+      IC3ReadValue1_ = IC3ReadValue1;   
+      Impulse_wheel++;//Overall impulse amount during session
+      Count_stop_vel = 0;
+      Capture1_total+=Capture1;
+      Fvel = 1;
+    }
   }
   if(TIM_GetITStatus(TIM3, TIM_IT_CC4) == SET) 
   {
     /* Clear TIM3 Capture compare interrupt pending bit */
     TIM_ClearITPendingBit(TIM3, TIM_IT_CC4);
-    IC3ReadValue2 = TIM_GetCapture4(TIM3);
-    if(IC3ReadValue2_>IC3ReadValue2)Capture1 = 65535 - IC3ReadValue2_ + IC3ReadValue2;
-    else Capture2 = IC3ReadValue2 - IC3ReadValue2_;
-    IC3ReadValue2_ = IC3ReadValue2;
-    Count_stop_cad = 0;
+    if((prog_state | ~STATE_CAD) == ~STATE_CAD) //idle cadence
+    {
+      prog_state = prog_state | STATE_CAD;
+      Capture2 = 1;
+      Count_stop_cad = 0;
+      return;
+    }
+    else if((prog_state & STATE_CAD) == STATE_CAD)// work cadence
+    {
+      IC3ReadValue2 = TIM_GetCapture4(TIM3);
+      if(IC3ReadValue2_>IC3ReadValue2)Capture1 = 65535 - IC3ReadValue2_ + IC3ReadValue2;
+      else Capture2 = IC3ReadValue2 - IC3ReadValue2_;
+      IC3ReadValue2_ = IC3ReadValue2;
+      Count_stop_cad = 0;
+      Impulse_crank++;
+      Capture2_total+=Capture2;
+    }
   }
 }
 
