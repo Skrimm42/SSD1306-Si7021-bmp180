@@ -20,17 +20,29 @@
   */  
     
     
-    /*
-8.1 сек = 65535              ((Prescaler/72MHz)  * 65535 = 8.1 cek)
+/*
+(Prescaler/72MHz)  * 65535 = 8.1 cek - максимум между импульсами
+
+8.1 сек = 65535              
 х сек   = 4045 (намеряли)
 
+
      2248(длина окружности колеса) * 65535      36
-V = -------------------------------------- * ---------- [km/h]
+V = -------------------------------------- * ---------- [km/h] 
       8.1 сек * 4045(намеряли)                  10000
+
+        65535 * 36
+Kv = ----------------
+       8.1 c * 10000
+
 
             65535
 Cadence = -------------------  * 60 сек [rpm]
            Capture2 * 8.1 cek
+
+          65535 * 60cek
+Kc = -------------------
+           8.1cek
 
 */
 
@@ -64,13 +76,8 @@ __IO void delay(__IO uint32_t nCount);
 void GPIO_Setup(void);
 void Tim3_Setup(void);
 void Tim4_setup(void);
-/* Private functions ---------------------------------------------------------*/
 
-/**
-  * @brief  Main program.
-  * @param  None
-  * @retval None
-  */
+
 
 int main(void)
 {
@@ -101,10 +108,11 @@ int main(void)
   
   prog_state = 0x00;
   
+
   /* Infinite loop */
   while (1)
   {
-
+    //delay(10000);
   }
 }
 
@@ -156,7 +164,7 @@ void Tim3_Setup(void)
   
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
   TIM_TimeBaseStructure.TIM_Period = 65535;
-  TIM_TimeBaseStructure.TIM_Prescaler = 444;
+  TIM_TimeBaseStructure.TIM_Prescaler = 8899;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   

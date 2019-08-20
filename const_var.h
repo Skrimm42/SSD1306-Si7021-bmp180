@@ -23,9 +23,10 @@ extern struct bmp280_dev bmp;
 extern uint64_t Capture1_total, Capture2_total;
 extern uint8_t prog_state;
 extern bool Fcad, Fvel;
-extern float Velocity, Velocity_avg;
-extern uint16_t Distance_m;
-extern float Cadence, Cadence_avg;
+extern float Velocity, Velocity_avg, Velocity_max;
+extern uint32_t Distance_m, Distance_total;
+extern float Cadence, Cadence_avg, Cadence_max;
 extern float Height;
 extern uint8_t display_frame_n;
+
 #endif  //__CONST_VAR_H_

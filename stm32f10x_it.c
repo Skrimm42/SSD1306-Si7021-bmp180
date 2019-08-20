@@ -168,6 +168,7 @@ void TIM3_IRQHandler(void)
     if((prog_state | ~STATE_VEL) == ~STATE_VEL)//idle vel
     {
       prog_state = prog_state | STATE_VEL;
+      IC3ReadValue1_ = TIM_GetCapture3(TIM3);
       Capture1 = 1;
       Count_stop_vel = 0;
       Fvel = 0;
@@ -192,19 +193,22 @@ void TIM3_IRQHandler(void)
     if((prog_state | ~STATE_CAD) == ~STATE_CAD) //idle cadence
     {
       prog_state = prog_state | STATE_CAD;
+      IC3ReadValue2_ = TIM_GetCapture4(TIM3);
       Capture2 = 1;
       Count_stop_cad = 0;
+      Fcad = 0;
       return;
     }
     else if((prog_state & STATE_CAD) == STATE_CAD)// work cadence
     {
       IC3ReadValue2 = TIM_GetCapture4(TIM3);
-      if(IC3ReadValue2_>IC3ReadValue2)Capture1 = 65535 - IC3ReadValue2_ + IC3ReadValue2;
+      if(IC3ReadValue2_ > IC3ReadValue2)Capture2 = 65535 - IC3ReadValue2_ + IC3ReadValue2;
       else Capture2 = IC3ReadValue2 - IC3ReadValue2_;
       IC3ReadValue2_ = IC3ReadValue2;
       Count_stop_cad = 0;
       Impulse_crank++;
       Capture2_total+=Capture2;
+      Fcad = 1;
     }
   }
 }

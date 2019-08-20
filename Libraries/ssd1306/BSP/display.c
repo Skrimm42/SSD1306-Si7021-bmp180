@@ -107,7 +107,7 @@ void SSD1306_printf(FONT_INFO* Font, const char *fmt, ...) {
 
 	va_start(args, fmt);
 	size = vsprintf(buffer, fmt, args);
-
+        
 	for (i = 0; i < size; i++) {
 		character = buffer[i];
 
