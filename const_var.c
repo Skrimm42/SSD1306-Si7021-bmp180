@@ -20,4 +20,4 @@ float Velocity, Velocity_avg, Velocity_max;
 uint32_t Distance_m, Distance_total;
 float Cadence, Cadence_avg, Cadence_max;
 float Height;
-uint8_t display_frame_n;
+uint8_t display_frame_n, display_frame_nw;

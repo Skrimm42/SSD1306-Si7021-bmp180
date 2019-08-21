@@ -38,19 +38,15 @@ void user_program(void)
   uint32_t Distance_km;
   static uint8_t Distance_tmp = 0;
   
-  //  *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
-  //  *DWT_CYCCNT = 0; // Reset cycle counter  
-  //  *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
-  //  count = 0;
+  *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
+  *DWT_CYCCNT = 0; // Reset cycle counter  
+  *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
+  count = 0;
   
   // LED
   if(tgl)GPIO_SetBits(GPIOC, GPIO_Pin_13);
   else GPIO_ResetBits(GPIOC, GPIO_Pin_13);
   tgl = !tgl;
-  
-  //Switch Frames on OLED
-  display_frame_n += GetButton1();
-  if(display_frame_n == 3)display_frame_n = 0;
   
   // switch to IDLE 
   if(Count_stop_vel++ >= VEL_LIMIT)
@@ -105,54 +101,7 @@ void user_program(void)
   Distance_total += Distance_tmp;
   Distance_tmp = Distance_km;
   
-  //Display
-  SSD1306_Fill(SSD1306_COLOR_BLACK);
-  if(display_frame_n == 0)
-  {
-    if(((prog_state | ~STATE_VEL) == ~STATE_VEL) )//idle vel 
-    {
-      SSD1306_GotoXY(0, 0); 
-      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f Km/h avg",  Velocity_avg);
-    }
-    else if((prog_state & STATE_VEL) == STATE_VEL)//work vel
-    {
-      SSD1306_GotoXY(0, 0); 
-      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f Km/h",  Velocity);
-    }
-    if(((prog_state | ~STATE_CAD) == ~STATE_CAD) )//idle cadence
-    {
-      SSD1306_GotoXY(0, 20);
-      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f RPM avg",  Cadence_avg);
-    }
-    else if((prog_state & STATE_CAD) == STATE_CAD)//work cadence 
-    {
-      SSD1306_GotoXY(0, 20);
-      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f RPM",  Cadence);
-    }
-    SSD1306_GotoXY(0, 40);
-    if(Distance_m < 1000)SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%d m",  Distance_m);
-    else SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f km",  (float)Distance_m/1000.0f);
-  }
-  else if(display_frame_n == 1)
-  {
-    SSD1306_GotoXY(0, 0); 
-    SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f Km/h max",  Velocity_max);
-    SSD1306_GotoXY(0, 20);
-    SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f RPM max",  Cadence_max);
-    SSD1306_GotoXY(0, 40);
-    SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f m(h)",  Height);
-  }
-  else if(display_frame_n == 2)
-  {
-    SSD1306_GotoXY(0, 0); 
-    SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f degC",  (float)temp32/100.0f);
-    SSD1306_GotoXY(0, 20);
-    SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%d km", Distance_total);
-  }
-  SSD1306_UpdateScreenDMA();
-  
-  count = *DWT_CYCCNT;
-  
+   
   // Reset button
   if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
   {
@@ -164,6 +113,85 @@ void user_program(void)
     Velocity_max = 0;
     Cadence_max = 0;
     Velocity_avg = 0;
-    Cadence_avg = 0;   
+    Cadence_avg = 0; 
+    Distance_tmp = 0;
   }
+  
+  count = *DWT_CYCCNT;
+  
+  //Display
+  SSD1306_Fill(SSD1306_COLOR_BLACK);
+  if((prog_state & STATE_VEL) == STATE_VEL)//if bicycle in move
+  {
+    //Switch frames when bicycle in move;
+    display_frame_nw += GetButton1();
+    if(display_frame_nw == 3)display_frame_nw = 0;
+    display_frame_n = 0;
+    
+    if(display_frame_nw == 0)
+    { 
+      SSD1306_GotoXY(0, 5); 
+      SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.2f",  Velocity);
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, " Km/h");
+    }
+    else if(display_frame_nw == 1)
+    {
+      SSD1306_GotoXY(0, 5); 
+      if((prog_state & STATE_CAD) == STATE_CAD)//work cadence 
+      {
+        SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  Cadence);
+        SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, " rpm");
+      }
+      else if(((prog_state | ~STATE_CAD) == ~STATE_CAD) )//idle cadence
+      {
+        SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  Cadence_avg);
+        SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, " rpm");
+        SSD1306_GotoXY(SSD1306_GetCurrentX() - 25, SSD1306_GetCurrentY() + lessPerfectDOSVGA_13ptFontInfo.heightPixels);
+        SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, " avg");
+      } 
+    }
+    else if(display_frame_nw == 2)
+    {
+      SSD1306_GotoXY(0, 5);
+      SSD1306_printf(&dSEG7Classic_20ptFontInfo, "%.1f",  Height);
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, " m");
+    }
+    SSD1306_GotoXY(0, 40);
+    if(Distance_m < 1000)SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%d m",  Distance_m);
+    else SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f km",  (float)Distance_m/1000.0f);
+  }
+  else
+  {  
+    //Switch Frames on OLED
+    display_frame_n += GetButton1();
+    if(display_frame_n == 3)display_frame_n = 0;
+    
+    if(display_frame_n == 0)
+    {
+      SSD1306_GotoXY(0, 0); 
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f Km/h avg",  Velocity_avg);
+      SSD1306_GotoXY(0, 20);
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f RPM avg",  Cadence_avg);
+      SSD1306_GotoXY(0, 40);
+      if(Distance_m < 1000)SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%d m",  Distance_m);
+      else SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f km",  (float)Distance_m/1000.0f);
+    }
+    else if(display_frame_n == 1)
+    {
+      SSD1306_GotoXY(0, 0); 
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.2f Km/h max",  Velocity_max);
+      SSD1306_GotoXY(0, 20);
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f RPM max",  Cadence_max);
+      SSD1306_GotoXY(0, 40);
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f m(h)",  Height);
+    }
+    else if(display_frame_n == 2)
+    {
+      SSD1306_GotoXY(0, 0); 
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%.1f degC",  (float)temp32/100.0f);
+      SSD1306_GotoXY(0, 20);
+      SSD1306_printf(&lessPerfectDOSVGA_13ptFontInfo, "%d km", Distance_total);
+    }
+  }
+  SSD1306_UpdateScreenDMA();
 }

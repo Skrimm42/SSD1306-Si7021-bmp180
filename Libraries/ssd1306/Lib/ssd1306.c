@@ -176,6 +176,15 @@ void SSD1306_GotoXY(uint16_t x, uint16_t y) {
 	SSD1306.CurrentY = y;
 }
 
+uint16_t SSD1306_GetCurrentX(void)
+{
+  return SSD1306.CurrentX;
+}
+
+uint16_t SSD1306_GetCurrentY(void)
+{
+  return SSD1306.CurrentY;
+}
 
 char SSD1306_Putspace(FONT_INFO* Font, SSD1306_COLOR_t color) {
   

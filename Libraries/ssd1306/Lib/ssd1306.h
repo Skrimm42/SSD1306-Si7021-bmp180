@@ -121,6 +121,19 @@ void SSD1306_DrawPixel(uint16_t x, uint16_t y, SSD1306_COLOR_t color);
 void SSD1306_GotoXY(uint16_t x, uint16_t y);
 
 /**
+ * @brief  Get current X coordinate
+ * @param  None
+ * @retval Current X Coordinate
+ */
+uint16_t SSD1306_GetCurrentX(void);
+
+/**
+ * @brief  Get current Y coordinate
+ * @param  None
+ * @retval Current Y Coordinate
+ */
+uint16_t SSD1306_GetCurrentY(void);
+/**
  * @brief  Puts character to internal RAM
  * @note   @ref SSD1306_UpdateScreen() must be called after that in order to see updated LCD screen
  * @param  ch: Character to be written

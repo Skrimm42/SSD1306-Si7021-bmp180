@@ -27,6 +27,6 @@ extern float Velocity, Velocity_avg, Velocity_max;
 extern uint32_t Distance_m, Distance_total;
 extern float Cadence, Cadence_avg, Cadence_max;
 extern float Height;
-extern uint8_t display_frame_n;
+extern uint8_t display_frame_n, display_frame_nw;
 
 #endif  //__CONST_VAR_H_
