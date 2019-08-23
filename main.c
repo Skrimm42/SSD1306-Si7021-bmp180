@@ -53,7 +53,7 @@ Kc = -------------------
 #include <math.h>
 #include <stdbool.h>
 #include "const_var.h"
-
+#include "sEEPROM_SPI.h"
 
 
 /** @addtogroup STM32F10x_StdPeriph_Template
@@ -102,7 +102,7 @@ int main(void)
   GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
   BMP280_I2C_Setup(&bmp);
-  
+  sEE_Init();
   Tim3_Setup();//Input Capture  
   Tim4_setup();//1sec user program
   

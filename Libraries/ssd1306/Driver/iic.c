@@ -179,7 +179,7 @@ uint32_t sEE_TIMEOUT_UserCallback(void)
 }
 
 
-uint32_t sEE_WritePage(uint8_t DevAddress, uint16_t WriteAddr, uint8_t* pBuffer, uint16_t NumByteToWrite)
+uint32_t iic_WritePage(uint8_t DevAddress, uint16_t WriteAddr, uint8_t* pBuffer, uint16_t NumByteToWrite)
 { 
   /* Set the pointer to the Number of data to be written. This pointer will be used 
       by the DMA Transfer Completer interrupt Handler in order to reset the 

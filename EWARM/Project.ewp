@@ -356,6 +356,7 @@
                     <state>$PROJ_DIR$\..\Libraries\Si7021</state>
                     <state>$PROJ_DIR$\..\Libraries\BMP180</state>
                     <state>$PROJ_DIR$\..\Libraries\BMP280</state>
+                    <state>$PROJ_DIR$\..\Libraries\sEEPROM</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1111,7 +1112,7 @@
                 </option>
                 <option>
                     <name>OGLastSavedByProductVersion</name>
-                    <state>8.40.1.21529</state>
+                    <state>8.32.2.19370</state>
                 </option>
                 <option>
                     <name>GeneralEnableMisra</name>
@@ -1401,6 +1402,7 @@
                     <state>$PROJ_DIR$\..\Libraries\Si7021</state>
                     <state>$PROJ_DIR$\..\Libraries\BMP180</state>
                     <state>$PROJ_DIR$\..\Libraries\BMP280</state>
+                    <state>$PROJ_DIR$\..\Libraries\sEEPROM</state>
                 </option>
                 <option>
                     <name>CCStdIncCheck</name>
@@ -1759,7 +1761,7 @@
                 </option>
                 <option>
                     <name>IlinkOutputFile</name>
-                    <state>###Unitialized###</state>
+                    <state>Project.out</state>
                 </option>
                 <option>
                     <name>IlinkDebugInfoEnable</name>
@@ -2112,6 +2114,12 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Libraries\BMP280\bmp280_user.c</name>
+            </file>
+        </group>
+        <group>
+            <name>sEEPROM</name>
+            <file>
+                <name>$PROJ_DIR$\..\Libraries\sEEPROM\sEEPROM_SPI.c</name>
             </file>
         </group>
         <group>

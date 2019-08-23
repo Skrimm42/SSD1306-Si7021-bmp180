@@ -47,7 +47,7 @@ int8_t i2cm_Stop(I2C_TypeDef* I2Cx, uint16_t TimeOut);
 int8_t i2cm_WriteBuff(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint16_t TimeOut);
 int8_t i2cm_ReadBuffAndStop(I2C_TypeDef* I2Cx, uint8_t *pbuf, uint16_t len, uint16_t TimeOut);
 
-uint32_t sEE_WritePage(uint8_t DevAddress, uint16_t WriteAddr, uint8_t* pBuffer, uint16_t NumByteToWrite);
+uint32_t iic_WritePage(uint8_t DevAddress, uint16_t WriteAddr, uint8_t* pBuffer, uint16_t NumByteToWrite);
 
 //-------DMA Definitions--------------------------------------------------------
 #define sEE_I2C                          I2C1
