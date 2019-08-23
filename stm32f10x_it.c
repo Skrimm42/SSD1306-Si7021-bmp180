@@ -182,6 +182,7 @@ void TIM3_IRQHandler(void)
       IC3ReadValue1_ = IC3ReadValue1;   
       Impulse_wheel++;//Overall impulse amount during session
       Count_stop_vel = 0;
+      standby_cntr = 0;
       Capture1_total+=Capture1;
       Fvel = 1;
     }

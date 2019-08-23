@@ -106,6 +106,10 @@ int main(void)
   Tim3_Setup();//Input Capture  
   Tim4_setup();//1sec user program
   
+  // ENABLE Wake Up Pin PA.0
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR,ENABLE);
+  PWR_WakeUpPinCmd(ENABLE);
+  
   prog_state = 0x00;
   
 

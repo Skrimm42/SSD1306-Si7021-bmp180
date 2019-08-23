@@ -23,6 +23,7 @@ bool GetButton1(void)
   if((Fres^Fres_) & Fres == 1)
   {
     Freturn = 1;
+    standby_cntr = 0; //reset standby counter
   }
   Fres_ = Fres;
   
@@ -43,6 +44,7 @@ void user_program(void)
   *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
   count = 0;
   
+  
   // LED
   if(tgl)GPIO_SetBits(GPIOC, GPIO_Pin_13);
   else GPIO_ResetBits(GPIOC, GPIO_Pin_13);
@@ -58,6 +60,15 @@ void user_program(void)
   {
     Count_stop_cad = CAD_LIMIT;
     prog_state &= ~STATE_CAD;
+  }
+  
+  /* Enters STANDBY mode */
+  if(standby_cntr++ >= STANDBY_LIMIT)
+  {   
+    SSD1306_Fill(SSD1306_COLOR_BLACK);
+    SSD1306_UpdateScreenDMA();
+    while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));  
+    PWR_EnterSTANDBYMode();
   }
   
   while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));  
@@ -101,7 +112,7 @@ void user_program(void)
   Distance_total += Distance_tmp;
   Distance_tmp = Distance_km;
   
-   
+  
   // Reset button
   if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
   {
