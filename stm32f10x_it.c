@@ -181,6 +181,7 @@ void TIM3_IRQHandler(void)
       else Capture1 = IC3ReadValue1 - IC3ReadValue1_;
       IC3ReadValue1_ = IC3ReadValue1;   
       Impulse_wheel++;//Overall impulse amount during session
+      Impulse_wheel_total++; //Overall imp amount all time
       Count_stop_vel = 0;
       standby_cntr = 0;
       Capture1_total+=Capture1;

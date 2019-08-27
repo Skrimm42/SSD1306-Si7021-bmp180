@@ -2,6 +2,7 @@
 
 #include "user.h"
 #include "const_var.h"
+#include "sEEPROM_SPI.h"
 
 // addresses of registers
 volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
@@ -37,14 +38,14 @@ void user_program(void)
   uint32_t pres64;
   int32_t temp32;
   uint32_t Distance_km;
-  static uint8_t Distance_tmp = 0;
+  static uint64_t Impulse_wheel_total_;
+  static uint8_t slowdown;
   
   *DEMCR = *DEMCR | 0x01000000; // enable the use DWT
   *DWT_CYCCNT = 0; // Reset cycle counter  
   *DWT_CONTROL = *DWT_CONTROL | 1 ; // enable cycle counter
   count = 0;
-  
-  
+ 
   // LED
   if(tgl)GPIO_SetBits(GPIOC, GPIO_Pin_13);
   else GPIO_ResetBits(GPIOC, GPIO_Pin_13);
@@ -108,9 +109,19 @@ void user_program(void)
   if(Velocity > Velocity_max) Velocity_max = Velocity;
   if(Cadence > Cadence_max) Cadence_max = Cadence;
   
-  Distance_tmp = Distance_km - Distance_tmp;
-  Distance_total += Distance_tmp;
-  Distance_tmp = Distance_km;
+  //Overall distance (odometer)  
+  Distance_total = Impulse_wheel_total * ((float)Wheel_length / 1000000.0f); //meters
+  
+  if((slowdown++ > 10) && (Impulse_wheel_total_ < Impulse_wheel_total))//every 5 sec in movement
+  {
+    slowdown = 0;
+    sEE_WriteBuffer((uint8_t*)&Impulse_wheel_total, 0x20, sizeof(Impulse_wheel_total));
+  }
+  Impulse_wheel_total_ = Impulse_wheel_total;
+  
+  //Distance_tmp = Distance_km - Distance_tmp;
+  //Distance_total += Distance_tmp;
+  //Distance_tmp = Distance_km;
   
   
   // Reset button
@@ -125,7 +136,7 @@ void user_program(void)
     Cadence_max = 0;
     Velocity_avg = 0;
     Cadence_avg = 0; 
-    Distance_tmp = 0;
+    Impulse_wheel_total_ = 0;
   }
   
   count = *DWT_CYCCNT;

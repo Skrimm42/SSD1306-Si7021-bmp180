@@ -118,17 +118,20 @@ void sEE_LowLevel_Init(void)
   
   /*!< SPI pins configuration *************************************************/
 
-  GPIO_InitStructure.GPIO_Pin = sEE_SPI_SCK_PIN | sEE_SPI_MOSI_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
-  GPIO_Init(sEE_SPI_SCK_GPIO_PORT, &GPIO_InitStructure);
-  
-  GPIO_InitStructure.GPIO_Pin = sEE_SPI_MISO_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-  GPIO_Init(sEE_SPI_SCK_GPIO_PORT, &GPIO_InitStructure);
-  
   GPIO_InitStructure.GPIO_Pin = sEE_CS_PIN;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(sEE_SPI_SCK_GPIO_PORT, &GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  
+  GPIO_InitStructure.GPIO_Pin = sEE_SPI_SCK_PIN | sEE_SPI_MOSI_PIN; //sck | MOSI
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  
+  GPIO_InitStructure.GPIO_Pin = sEE_SPI_MISO_PIN; 
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
      
 }
 

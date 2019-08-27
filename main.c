@@ -103,20 +103,22 @@ int main(void)
   InitDisplay(); //I2C1 init
   BMP280_I2C_Setup(&bmp);
   sEE_Init();
-  Tim3_Setup();//Input Capture  
-  Tim4_setup();//1sec user program
-  
-  // ENABLE Wake Up Pin PA.0
+   // ENABLE Wake Up Pin PA.0
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR,ENABLE);
   PWR_WakeUpPinCmd(ENABLE);
   
-  prog_state = 0x00;
+  sEE_ReadBuffer((uint8_t*)&Impulse_wheel_total, 0x20, sizeof(Impulse_wheel_total));
   
-
+  Tim3_Setup();//Input Capture  
+  Tim4_setup();//1sec user program
+ 
+  prog_state = 0x00;
+  //sEE_WriteBuffer((uint8_t*)&Impulse_wheel, 0x20, 4);
+  //
   /* Infinite loop */
   while (1)
   {
-    //delay(10000);
+    
   }
 }
 
@@ -155,7 +157,7 @@ void Tim3_Setup(void)
   
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
   GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0 | GPIO_Pin_1;//Tim3_Ch1, Tim2_Ch4
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz; 
   GPIO_Init(GPIOB, &GPIO_InitStructure);
   

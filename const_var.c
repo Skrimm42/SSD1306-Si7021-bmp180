@@ -11,7 +11,7 @@ uint32_t pres64_ = 25503577;
 const float Kv = 29.1235955, Kc = 485444.44;
 
 uint8_t Count_stop_vel, Count_stop_cad;
-uint64_t Capture1_total, Capture2_total;
+uint32_t Capture1_total, Capture2_total;
 struct bmp280_dev bmp;
 
 uint8_t prog_state;
@@ -22,3 +22,5 @@ float Cadence, Cadence_avg, Cadence_max;
 float Height;
 uint8_t display_frame_n, display_frame_nw;
 uint8_t standby_cntr;
+
+uint64_t Impulse_wheel_total;
