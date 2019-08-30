@@ -3,6 +3,7 @@
 #include "user.h"
 #include "const_var.h"
 #include "sEEPROM_SPI.h"
+#include "main.h"
 
 // addresses of registers
 volatile uint32_t *DWT_CONTROL = (uint32_t *)0xE0001000;
@@ -13,6 +14,8 @@ uint32_t count;
 
 
 bool GetButton1(void);
+bool GetButton2(void);
+
 
 bool GetButton1(void)
 {
@@ -31,13 +34,29 @@ bool GetButton1(void)
   return Freturn; 
 }
 
+bool GetButton2(void)
+{
+  static bool Fres_;
+  bool Fres, Freturn;
+  
+  Freturn = 0;
+  Fres = GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14);
+  if((Fres^Fres_) & Fres == 1)
+  {
+    Freturn = 1;
+    standby_cntr = 0; //reset standby counter
+  }
+  Fres_ = Fres;
+  
+  return Freturn; 
+}
+
 void user_program(void)
 {
   static bool tgl;
   struct bmp280_uncomp_data ucomp_data;
   uint32_t pres64;
   int32_t temp32;
-  uint32_t Distance_km;
   static uint64_t Impulse_wheel_total_;
   static uint8_t slowdown;
   
@@ -69,6 +88,7 @@ void user_program(void)
     SSD1306_Fill(SSD1306_COLOR_BLACK);
     SSD1306_UpdateScreenDMA();
     while(I2C_GetFlagStatus(I2C1, I2C_FLAG_BUSY));  
+    WriteDataEEPROM();
     PWR_EnterSTANDBYMode();
   }
   
@@ -82,7 +102,6 @@ void user_program(void)
   
   
   Distance_m = (Impulse_wheel * Wheel_length)/1000; //meters
-  Distance_km = (uint32_t)Distance_m/1000;
   
   if((prog_state | ~STATE_VEL) == ~STATE_VEL)//idle vel
   {
@@ -119,13 +138,9 @@ void user_program(void)
   }
   Impulse_wheel_total_ = Impulse_wheel_total;
   
-  //Distance_tmp = Distance_km - Distance_tmp;
-  //Distance_total += Distance_tmp;
-  //Distance_tmp = Distance_km;
-  
   
   // Reset button
-  if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_14))
+  if(GetButton2())
   {
     Impulse_wheel = 0;
     Impulse_crank = 0;

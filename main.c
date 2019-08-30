@@ -47,7 +47,7 @@ Kc = -------------------
 */
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f10x.h"
+#include "main.h"
 #include "display.h"
 #include "bmp280_user.h"
 #include <math.h>
@@ -81,6 +81,7 @@ void Tim4_setup(void);
 
 int main(void)
 {
+  uint32_t resetcntr = 0;  
   /*!< At this stage the microcontroller clock setting is already configured, 
   this is done through SystemInit() function which is called from startup
   file (startup_stm32f10x_xx.s) before to branch to application main.
@@ -101,17 +102,60 @@ int main(void)
   
   GPIO_Setup(); //LED PC.13
   InitDisplay(); //I2C1 init
-  BMP280_I2C_Setup(&bmp);
   sEE_Init();
-   // ENABLE Wake Up Pin PA.0
+  BMP280_I2C_Setup(&bmp);
+ 
+  
+  if(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))
+  {
+    SSD1306_GotoXY(0, 5);
+    SSD1306_Puts("Reset all", &lessPerfectDOSVGA_13ptFontInfo, SSD1306_COLOR_WHITE);
+    SSD1306_UpdateScreenDMA();
+    while(GPIO_ReadInputDataBit(GPIOC, GPIO_Pin_15))
+    {     
+      if(resetcntr++ >= 10000000)
+      {
+        Impulse_wheel_total = 0;
+        Impulse_wheel = 0;
+        Impulse_crank = 0;
+        Capture1_total = 0;
+        Capture2_total = 0;
+        Velocity_max = 0;
+        Cadence_max = 0;
+        Velocity_avg = 0;
+        Cadence_avg = 0; 
+        WriteDataEEPROM();
+        
+        resetcntr = 10000000;
+        SSD1306_GotoXY(0, 5);
+        SSD1306_Puts("Reseted!", &lessPerfectDOSVGA_13ptFontInfo, SSD1306_COLOR_WHITE);
+        SSD1306_UpdateScreenDMA();
+        delay(20000000);
+        break;
+      }
+    }
+  }
+  
+    sEE_ReadBuffer((uint8_t*)&Impulse_wheel_total, 0x20, sizeof(Impulse_wheel_total));
+  sEE_ReadBuffer((uint8_t*)&pres64_, 0x40, sizeof(pres64_));
+  sEE_ReadBuffer((uint8_t*)&Impulse_wheel, 0x44, sizeof(Impulse_wheel));
+  sEE_ReadBuffer((uint8_t*)&Capture1, 0x48, sizeof(Capture1));
+  sEE_ReadBuffer((uint8_t*)&Capture2, 0x4A, sizeof(Capture2));
+  sEE_ReadBuffer((uint8_t*)&Capture1_total, 0x4E, sizeof(Capture1_total));
+  sEE_ReadBuffer((uint8_t*)&Capture2_total, 0x52, sizeof(Capture2_total));
+  sEE_ReadBuffer((uint8_t*)&Velocity_avg, 0x60, sizeof(Velocity_avg));
+  sEE_ReadBuffer((uint8_t*)&Velocity_max, 0x64, sizeof(Velocity_max));
+  sEE_ReadBuffer((uint8_t*)&Cadence_avg, 0x68, sizeof(Cadence_avg));
+  sEE_ReadBuffer((uint8_t*)&Cadence_max, 0x6C, sizeof(Cadence_max));
+  
+  
+  // ENABLE Wake Up Pin PA.0
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_PWR,ENABLE);
   PWR_WakeUpPinCmd(ENABLE);
-  
-  sEE_ReadBuffer((uint8_t*)&Impulse_wheel_total, 0x20, sizeof(Impulse_wheel_total));
-  
+   
   Tim3_Setup();//Input Capture  
   Tim4_setup();//1sec user program
- 
+  
   prog_state = 0x00;
   //sEE_WriteBuffer((uint8_t*)&Impulse_wheel, 0x20, 4);
   //
@@ -145,6 +189,21 @@ __IO void delay(__IO uint32_t nCount)
   {
   }
    
+}
+
+void WriteDataEEPROM(void)
+{
+  sEE_WriteBuffer((uint8_t*)&Impulse_wheel_total, 0x20, sizeof(Impulse_wheel_total));
+  sEE_WriteBuffer((uint8_t*)&pres64_, 0x40, sizeof(pres64_));
+  sEE_WriteBuffer((uint8_t*)&Impulse_wheel, 0x44, sizeof(Impulse_wheel));
+  sEE_WriteBuffer((uint8_t*)&Capture1, 0x48, sizeof(Capture1));
+  sEE_WriteBuffer((uint8_t*)&Capture2, 0x4A, sizeof(Capture2));
+  sEE_WriteBuffer((uint8_t*)&Capture1_total, 0x4E, sizeof(Capture1_total));
+  sEE_WriteBuffer((uint8_t*)&Capture2_total, 0x52, sizeof(Capture2_total));
+  sEE_WriteBuffer((uint8_t*)&Velocity_avg, 0x60, sizeof(Velocity_avg));
+  sEE_WriteBuffer((uint8_t*)&Velocity_max, 0x64, sizeof(Velocity_max));
+  sEE_WriteBuffer((uint8_t*)&Cadence_avg, 0x68, sizeof(Cadence_avg));
+  sEE_WriteBuffer((uint8_t*)&Cadence_max, 0x6C, sizeof(Cadence_max));
 }
 
 
